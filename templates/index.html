@@ -398,9 +398,9 @@
                   <h2 class="card-heading-title">Farm Field Overview</h2>
                 </div>
                 <div class="layer-toggle-group">
-                  <button class="layer-toggle-btn active" data-layer="NDVI">NDVI</button>
-                  <button class="layer-toggle-btn" data-layer="True Color">True Color</button>
-                  <button class="layer-toggle-btn" data-layer="Land Cover">Land Cover</button>
+                  <button class="layer-toggle-btn active" data-layer="NDVI" onclick="FarmMap.setDesktopLayer('NDVI')">NDVI</button>
+                  <button class="layer-toggle-btn" data-layer="True Color" onclick="FarmMap.setDesktopLayer('True Color')">True Color</button>
+                  <button class="layer-toggle-btn" data-layer="Land Cover" onclick="FarmMap.setDesktopLayer('Land Cover')">Land Cover</button>
                 </div>
               </div>
 
@@ -414,18 +414,22 @@
                   </div>
                 </div>
 
-                <div class="map-legend-vertical">
-                  <div class="legend-bar-gradient"></div>
-                  <div class="legend-text-labels">
-                    <span class="lbl-healthy">Healthy</span>
-                    <span class="lbl-stressed">Stressed</span>
+                <div class="map-legend-vertical" id="desk-map-legend">
+                  <div style="font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">NDVI Vigor</div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="legend-bar-gradient" style="width: 12px; height: 95px; border-radius: 6px; background: linear-gradient(to bottom, #22c55e 0%, #eab308 50%, #ef4444 100%); border: 1px solid rgba(255,255,255,0.2);"></div>
+                    <div class="legend-text-labels" style="display: flex; flex-direction: column; justify-content: space-between; height: 95px; font-size: 11px; font-weight: 600;">
+                      <span class="lbl-healthy" style="color: #4ade80;">Healthy (0.85)</span>
+                      <span style="color: #facc15; font-size: 10px;">Moderate (0.55)</span>
+                      <span class="lbl-stressed" style="color: #f87171;">Stressed (0.22)</span>
+                    </div>
                   </div>
                 </div>
 
                 <div class="map-controls-group">
-                  <button class="map-ctrl-btn" id="desk-map-zoomin" title="Zoom In">+</button>
-                  <button class="map-ctrl-btn" id="desk-map-zoomout" title="Zoom Out">−</button>
-                  <button class="map-ctrl-btn" id="desk-map-fullscreen" title="Toggle Fullscreen">⛶</button>
+                  <button class="map-ctrl-btn" id="desk-map-zoomin" onclick="FarmMap.zoomIn()" title="Zoom In">+</button>
+                  <button class="map-ctrl-btn" id="desk-map-zoomout" onclick="FarmMap.zoomOut()" title="Zoom Out">−</button>
+                  <button class="map-ctrl-btn" id="desk-map-fullscreen" onclick="FarmMap.toggleFullscreen()" title="Toggle Fullscreen">⛶</button>
                 </div>
               </div>
             </div>

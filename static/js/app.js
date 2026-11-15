@@ -27,6 +27,9 @@ const FarmApp = {
     // Check if farm is registered and sync live weather
     await this.syncLiveTelemetry();
 
+    // Initialize map engine
+    if (typeof FarmMap !== 'undefined') FarmMap.init();
+
     // Render current view
     this.renderAll();
 
@@ -267,6 +270,7 @@ const FarmApp = {
     if (mobRecDesc) mobRecDesc.textContent = `Active plot: ${farm.name} (${farm.acreage} ha). Tap below to explore smart farming guidelines.`;
 
     this.renderOverviewCharts();
+    if (typeof FarmMap !== 'undefined') FarmMap.setupDesktopMap();
   },
 
   renderOverviewCharts: function() {
