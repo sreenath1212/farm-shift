@@ -1,0 +1,775 @@
+/* ==========================================================================
+   FARM SHIFT V1 - MOBILE LAYOUT (< 1024px and Dedicated Mobile Mode)
+   Pixel-accurate reproduction of NASA Field Shift: Kerala Farm Insights
+   ========================================================================== */
+
+.mobile-app-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: #070b12;
+  color: #ffffff;
+  position: relative;
+  padding-bottom: 78px; /* space for fixed bottom nav */
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+}
+
+/* Simulated Mobile Status Bar (9:41, wifi, battery) */
+.mobile-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px 6px 20px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+}
+
+.mobile-status-icons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+/* --------------------------------------------------------------------------
+   MOBILE TOP HEADER
+   -------------------------------------------------------------------------- */
+.mobile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px 12px 18px;
+}
+
+.mobile-brand-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mobile-nasa-logo {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.4));
+}
+
+.mobile-title-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-app-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.1;
+}
+
+.mobile-app-name .accent-shift {
+  color: #22c55e;
+}
+
+.mobile-app-subtitle {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+.mobile-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mobile-notif-btn {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cbd5e1;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.notif-dot {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  background: #ef4444;
+  border-radius: 50%;
+  border: 1px solid #070b12;
+}
+
+.mobile-profile-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  color: #f1f5f9;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   LOCATION & GLOBAL PILLS ROW
+   -------------------------------------------------------------------------- */
+.mobile-location-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px 14px 18px;
+  gap: 10px;
+}
+
+.mobile-loc-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  flex: 1;
+}
+
+.mobile-global-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  border-radius: var(--radius-pill);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #4ade80;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   MOBILE MAIN BODY CONTENT
+   -------------------------------------------------------------------------- */
+.mobile-content {
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Farm Overview Card */
+.mobile-farm-card {
+  padding: 16px;
+  position: relative;
+}
+
+.mobile-farm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.mobile-farm-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mobile-farm-icon-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4ade80;
+  font-size: 18px;
+}
+
+.mobile-farm-titles h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.mobile-farm-titles p {
+  font-size: 11.5px;
+  color: #94a3b8;
+}
+
+.mobile-btn-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: #4ade80;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Mobile Map Container */
+.mobile-map-box {
+  width: 100%;
+  height: 240px;
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-map-toggles {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  gap: 6px;
+  z-index: 10;
+}
+
+.mobile-map-pill {
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(11, 17, 29, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mobile-map-pill.active {
+  background: #22c55e;
+  color: #052e16;
+  font-weight: 700;
+  border-color: #22c55e;
+}
+
+/* Mobile Map Health Gradient Bar */
+.mobile-map-colorbar {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(11, 17, 29, 0.88);
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 10;
+}
+
+.mobile-colorbar-strip {
+  width: 90px;
+  height: 7px;
+  border-radius: 4px;
+  background: linear-gradient(to right, #ef4444 0%, #eab308 50%, #22c55e 100%);
+}
+
+.mobile-colorbar-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9.5px;
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   NDVI MODAL / EXPLAINER POPOVER
+   -------------------------------------------------------------------------- */
+.mobile-ndvi-popover {
+  background: rgba(15, 23, 42, 0.96);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 16px;
+  padding: 16px;
+  margin-top: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(34, 197, 94, 0.15);
+  position: relative;
+  animation: fadeInPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInPop {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ndvi-popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.ndvi-popover-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.ndvi-icon-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #22c55e;
+  color: #052e16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.ndvi-close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.ndvi-popover-desc {
+  font-size: 12.5px;
+  color: #cbd5e1;
+  line-height: 1.45;
+  margin-bottom: 12px;
+}
+
+.ndvi-popover-body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.ndvi-thumb-img {
+  width: 82px;
+  height: 82px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  flex-shrink: 0;
+}
+
+.ndvi-bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 11.5px;
+  color: #e2e8f0;
+}
+
+.ndvi-bullet-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.ndvi-bullet-item .check-icon {
+  color: #4ade80;
+  font-size: 13px;
+  margin-top: 1px;
+}
+
+.btn-got-it {
+  width: 100%;
+  padding: 9px 16px;
+  border-radius: var(--radius-pill);
+  background: #22c55e;
+  color: #052e16;
+  font-weight: 700;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+/* --------------------------------------------------------------------------
+   MOBILE 2X2 METRIC CARDS
+   -------------------------------------------------------------------------- */
+.mobile-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.mobile-metric-card {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.mobile-m-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.mobile-m-icon {
+  font-size: 18px;
+}
+
+.mobile-m-label {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.mobile-m-val-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.mobile-m-val {
+  font-size: 21px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.mobile-m-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   MOBILE AI RECOMMENDATION CARD
+   -------------------------------------------------------------------------- */
+.mobile-rec-card {
+  padding: 14px 16px;
+}
+
+.mobile-rec-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.mobile-rec-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.mobile-rec-body {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.mobile-rec-thumb {
+  width: 90px;
+  height: 90px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  flex-shrink: 0;
+}
+
+.mobile-rec-texts {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mobile-rec-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.mobile-rec-desc {
+  font-size: 11.5px;
+  color: #94a3b8;
+  line-height: 1.35;
+}
+
+/* --------------------------------------------------------------------------
+   MOBILE KEY INSIGHTS CARD
+   -------------------------------------------------------------------------- */
+.mobile-insights-card {
+  padding: 14px 16px;
+}
+
+.mobile-insights-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.mobile-insights-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.btn-see-all {
+  color: #94a3b8;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.mobile-insights-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.mobile-insights-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-insight-item {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 10px 12px;
+  min-width: 135px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.insight-icon-box {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.insight-text-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.insight-lbl {
+  font-size: 10px;
+  color: #94a3b8;
+  line-height: 1.2;
+}
+
+.insight-val {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   MOBILE FIXED BOTTOM NAVIGATION
+   -------------------------------------------------------------------------- */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: 480px;
+  margin: 0 auto;
+  background: rgba(7, 11, 18, 0.95);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 8px 12px 14px 12px;
+  z-index: 900;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 10.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  flex: 1;
+}
+
+.bottom-nav-item .b-icon {
+  font-size: 18px;
+  transition: transform 0.2s ease;
+}
+
+.bottom-nav-item.active {
+  color: #22c55e;
+}
+
+.bottom-nav-item.active .b-icon {
+  transform: scale(1.1);
+}
+
+.bottom-nav-item:hover:not(.active) {
+  color: #cbd5e1;
+}
+
+/* --------------------------------------------------------------------------
+   V2 MOBILE ADAPTATIONS FOR ADVANCED VIEWS
+   -------------------------------------------------------------------------- */
+.mobile-app-wrapper .app-section-view {
+  padding: 0 16px 20px 16px;
+}
+
+.mobile-app-wrapper .analytics-summary-grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.mobile-app-wrapper .analytics-obs-grid {
+  grid-template-columns: 1fr;
+}
+
+.mobile-app-wrapper .advisor-breakdown-grid {
+  grid-template-columns: 1fr;
+}
+
+.mobile-app-wrapper .gis-map-container-wrap {
+  height: 380px;
+}
+
+.mobile-app-wrapper .settings-grid-layout {
+  grid-template-columns: 1fr;
+}
+
+.mobile-app-wrapper .settings-form-row {
+  grid-template-columns: 1fr;
+}
+
+.mobile-app-wrapper .market-preview-grid {
+  grid-template-columns: 1fr;
+}
+
+.mobile-app-wrapper .advisor-filter-bar {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.mobile-app-wrapper .advisor-filter-item {
+  justify-content: space-between;
+}
+
+.mobile-app-wrapper .gis-floating-telemetry {
+  position: static;
+  margin-bottom: 10px;
+}
+
+.mobile-app-wrapper .empty-stat-grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.mobile-app-wrapper .methods-modules-grid {
+  grid-template-columns: 1fr;
+}
+
+.mobile-app-wrapper .my-farms-grid {
+  grid-template-columns: 1fr;
+}
+
+.mobile-app-wrapper .wizard-modal-box {
+  padding: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE MEDIA QUERIES
+   Intelligently switch between Desktop and Mobile layout
+   -------------------------------------------------------------------------- */
+@media (min-width: 1024px) {
+  /* On Desktop Screens, show desktop view and hide mobile view by default */
+  body:not(.force-mobile-view) .desktop-app-wrapper {
+    display: flex !important;
+  }
+  body:not(.force-mobile-view) .mobile-app-wrapper {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  /* On Mobile & Tablet Screens, show mobile view and hide desktop view by default */
+  body:not(.force-desktop-view) .desktop-app-wrapper {
+    display: none !important;
+  }
+  body:not(.force-desktop-view) .mobile-app-wrapper {
+    display: flex !important;
+  }
+}
+
+/* Override classes for user testing toggle */
+body.force-desktop-view .desktop-app-wrapper {
+  display: flex !important;
+}
+body.force-desktop-view .mobile-app-wrapper {
+  display: none !important;
+}
+
+body.force-mobile-view .desktop-app-wrapper {
+  display: none !important;
+}
+body.force-mobile-view .mobile-app-wrapper {
+  display: flex !important;
+}
+

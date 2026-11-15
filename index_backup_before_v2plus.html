@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Farm Shift V2+ | Smart Farming, Brighter Future</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/static/images/nasa_mobile_logo.png">
+
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Leaflet GIS CSS -->
+  <link rel="stylesheet" href="/static/vendor/leaflet/leaflet.css">
+
+  <!-- Core & Responsive Styles -->
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/desktop.css">
+  <link rel="stylesheet" href="/static/css/mobile.css">
+  <link rel="stylesheet" href="/static/css/v2plus.css">
+
+  <style>
+    .location-choices-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .location-choice-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+    .location-choice-btn:hover {
+      background: rgba(34, 197, 94, 0.15);
+      border-color: #22c55e;
+    }
+    .spinner-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: pulseDot 1s infinite alternate;
+    }
+    @keyframes pulseDot {
+      from { opacity: 0.3; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1.2); }
+    }
+    @keyframes pulsePin {
+      0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7); }
+      70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(56, 189, 248, 0); }
+      100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =======================================================================
+       1. DESKTOP / PC VERSION (>= 1024px)
+       ======================================================================= -->
+  <div class="desktop-app-wrapper" id="desktop-view">
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <!-- Brand Logo -->
+        <div class="brand-logo-container">
+          <div class="brand-icon leaf-mark" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+              <path d="M5 19c8-1 12-7 13-14-6 1-12 5-13 14z" fill="#ecfdf5"/>
+              <path d="M6 19c2-5 5-8 10-10" stroke="#166534" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="brand-text-block">
+            <span class="brand-title">Farm Shift</span>
+            <span class="brand-subtitle">Smart Farming, Brighter Future.</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a class="nav-link active" data-tab="overview">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-10.5z"/></svg>
+            <span>Dashboard</span>
+          </a>
+          <a class="nav-link" data-tab="my-farms">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.2"/></svg>
+            <span>My Farms</span>
+          </a>
+          <a class="nav-link" data-tab="analytics">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16"/><path d="M8 15l3-4 3 2 4-6"/></svg>
+            <span>Analytics</span>
+          </a>
+          <a class="nav-link" data-tab="alerts">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+            <span>Alerts</span>
+          </a>
+          <a class="nav-link" data-tab="settings">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9c.3.6.9 1 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+            <span>Settings</span>
+          </a>
+          <a class="nav-link" data-tab="about">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 8h.01"/></svg>
+            <span>About</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="sidebar-bottom v2p-side-foot">
+        <div class="v2p-nasa-row">
+          <img src="/static/images/nasa_logo.png" alt="NASA">
+          <span>Powered by<br>NASA</span>
+        </div>
+        <div class="v2p-version-card">
+          <strong>Farm Shift v2+</strong>
+          <div class="v2p-status-line"><span class="v2p-status-dot" id="sys-status-dot"></span><span id="sys-status-text">Checking status</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Desktop Content Area -->
+    <main class="desktop-main">
+
+      <!-- ===================================================================
+           1. SECTION: OVERVIEW (Empty vs Registered State)
+           =================================================================== -->
+      <div id="view-overview" class="app-section-view">
+        <!-- Top Bar -->
+        <header class="desktop-topbar">
+          <div class="topbar-left">
+            <button class="location-selector-btn" id="desk-location-btn" title="View Registered Farmlands">
+              <svg class="location-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/>
+              </svg>
+              <span id="desk-location-text">No Farm Selected</span>
+              <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            <div class="last-updated-text">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span>Status: <strong id="desk-last-updated" style="font-weight: 600; color: #cbd5e1;">Awaiting Registration</strong></span>
+            </div>
+          </div>
+
+          <div class="topbar-right">
+            <button class="btn-pill btn-primary-green btn-trigger-add-farm">
+              <span>+ Add Farm</span>
+            </button>
+            <div class="nasa-powered-badge">
+              <span>🌿</span>
+              <span>Powered by NASA</span>
+            </div>
+            <button class="user-avatar-btn" onclick="FarmApp.showView('settings')" title="Farm Settings">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <!-- EMPTY STATE (Section 2 & 8 requirement: When no farm registered) -->
+        <div id="overview-empty-state-box" style="display: none;">
+          <div class="overview-empty-hero-card">
+            <div class="empty-hero-icon">🌱</div>
+            <h2 class="empty-hero-title">No Farm Added Yet</h2>
+            <p class="empty-hero-desc">Add your farm to start monitoring, analysing and managing your farmland with calibrated NASA Earth observation, micro-climate alerts, and precision crop rotation.</p>
+            <button class="btn-pill btn-primary-green btn-trigger-add-farm" style="padding: 12px 28px; font-size: 14px;">
+              <span>+ Add Farm</span>
+            </button>
+          </div>
+
+          <!-- Empty stats grid -->
+          <div class="empty-stat-grid">
+            <div class="card-glass analytics-stat-card">
+              <span class="stat-card-label">Registered Farms</span>
+              <div class="stat-card-value">0</div>
+              <span class="stat-card-subtext">No active plots</span>
+            </div>
+            <div class="card-glass analytics-stat-card">
+              <span class="stat-card-label">Monitored Area</span>
+              <div class="stat-card-value">0.0 ha</div>
+              <span class="stat-card-subtext">0.0 acres</span>
+            </div>
+            <div class="card-glass analytics-stat-card">
+              <span class="stat-card-label">Active Alerts</span>
+              <div class="stat-card-value">0</div>
+              <span class="stat-card-subtext">No risks detected</span>
+            </div>
+            <div class="card-glass analytics-stat-card">
+              <span class="stat-card-label">Telemetry Status</span>
+              <div class="stat-card-value" style="font-size: 20px; color: #94a3b8;">Inactive</div>
+              <span class="stat-card-subtext">Register farm to connect</span>
+            </div>
+          </div>
+
+          <div class="empty-secondary-card">
+            <h4 style="font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px;">📊 Empty Analytics</h4>
+            <p style="font-size: 12.5px; color: #94a3b8;">No farm registered. Add a farm to view satellite indices, historical weather, and root-zone soil moisture.</p>
+          </div>
+
+          <div class="empty-secondary-card">
+            <h4 style="font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px;">🕒 Recent Activity</h4>
+            <p style="font-size: 12.5px; color: #94a3b8;">No recent activity logged. Register your first farmland to begin tracking agricultural telemetry.</p>
+          </div>
+        </div>
+
+        <!-- REGISTERED STATE: Displays real farm information -->
+        <div id="overview-registered-content" style="display: block;">
+          <!-- Row 1: KPI Cards -->
+          <section class="kpi-cards-grid">
+            <div class="card-glass kpi-card" onclick="FarmApp.showView('methods')" style="cursor: pointer;" title="View Smart Farming Guidelines">
+              <div class="kpi-header">
+                <div class="kpi-icon-wrap green">🌿</div>
+                <span class="kpi-title">Current Crop</span>
+              </div>
+              <div class="kpi-body">
+                <span class="kpi-value" id="kpi-crop-val" style="font-size: 20px;">Short-Duration Rice</span>
+                <span class="kpi-change-pill badge-trend-up">Active</span>
+              </div>
+              <div class="kpi-sparkline-wrap">
+                <canvas id="chart-crop-health" class="sparkline-canvas"></canvas>
+              </div>
+            </div>
+
+            <div class="card-glass kpi-card" onclick="FarmApp.showView('analytics')" style="cursor: pointer;" title="View Soil Telemetry">
+              <div class="kpi-header">
+                <div class="kpi-icon-wrap blue">💧</div>
+                <span class="kpi-title">Soil Moisture (0-7cm)</span>
+              </div>
+              <div class="kpi-body">
+                <span class="kpi-value" id="kpi-soil-val">68%</span>
+                <span class="kpi-change-pill badge-trend-up">Optimal</span>
+              </div>
+              <div class="kpi-sparkline-wrap">
+                <canvas id="chart-soil-moisture" class="sparkline-canvas"></canvas>
+              </div>
+            </div>
+
+            <div class="card-glass kpi-card" onclick="FarmApp.showView('analytics')" style="cursor: pointer;" title="View Temperature Window">
+              <div class="kpi-header">
+                <div class="kpi-icon-wrap orange">☀️</div>
+                <span class="kpi-title">Field Temperature</span>
+              </div>
+              <div class="kpi-body">
+                <span class="kpi-value" id="kpi-temp-val">31.2°C</span>
+                <span class="kpi-change-pill badge-trend-up" style="color: #f97316;">Normal</span>
+              </div>
+              <div class="kpi-sparkline-wrap">
+                <canvas id="chart-temperature" class="sparkline-canvas"></canvas>
+              </div>
+            </div>
+
+            <div class="card-glass kpi-card" onclick="FarmApp.showView('location')" style="cursor: pointer;" title="View Farm GIS Location">
+              <div class="kpi-header">
+                <div class="kpi-icon-wrap indigo">📐</div>
+                <span class="kpi-title">Registered Farmland</span>
+              </div>
+              <div class="kpi-body">
+                <span class="kpi-value" id="kpi-rain-val">4.5 ha</span>
+                <span class="kpi-change-pill badge-trend-up">Confirmed</span>
+              </div>
+              <div class="mini-bar-chart">
+                <div class="mini-bar" style="height: 40%;"></div>
+                <div class="mini-bar" style="height: 65%;"></div>
+                <div class="mini-bar" style="height: 50%;"></div>
+                <div class="mini-bar" style="height: 85%;"></div>
+                <div class="mini-bar" style="height: 100%;"></div>
+                <div class="mini-bar" style="height: 70%;"></div>
+                <div class="mini-bar" style="height: 45%;"></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Row 2: Overview Map + Smart Farming Summary -->
+          <section class="middle-grid">
+            <div class="card-glass field-overview-card" id="desktop-map-container">
+              <div class="card-top-action-bar">
+                <div class="card-title-group" onclick="FarmApp.showView('location')" style="cursor: pointer;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                    <line x1="8" y1="2" x2="8" y2="18"></line>
+                    <line x1="16" y1="6" x2="16" y2="22"></line>
+                  </svg>
+                  <h2 class="card-heading-title">Farm Field Overview</h2>
+                </div>
+                <div class="layer-toggle-group">
+                  <button class="layer-toggle-btn active" data-layer="NDVI">NDVI</button>
+                  <button class="layer-toggle-btn" data-layer="True Color">True Color</button>
+                  <button class="layer-toggle-btn" data-layer="Land Cover">Land Cover</button>
+                </div>
+              </div>
+
+              <div class="map-canvas-container">
+                <img src="/static/images/farm_satellite.jpg" alt="Satellite Field Overview" class="map-background-img" id="desktop-map-img">
+
+                <div class="field-marker-badge" id="desk-field-marker">
+                  <div id="desk-field-marker-text">
+                    <strong>My Farm</strong>
+                    <span class="field-health-num">Active Plot</span>
+                  </div>
+                </div>
+
+                <div class="map-legend-vertical">
+                  <div class="legend-bar-gradient"></div>
+                  <div class="legend-text-labels">
+                    <span class="lbl-healthy">Healthy</span>
+                    <span class="lbl-stressed">Stressed</span>
+                  </div>
+                </div>
+
+                <div class="map-controls-group">
+                  <button class="map-ctrl-btn" id="desk-map-zoomin" title="Zoom In">+</button>
+                  <button class="map-ctrl-btn" id="desk-map-zoomout" title="Zoom Out">−</button>
+                  <button class="map-ctrl-btn" id="desk-map-fullscreen" title="Toggle Fullscreen">⛶</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-glass ai-recommendation-card">
+              <div>
+                <div class="rec-header-row">
+                  <div class="rec-title-group" onclick="FarmApp.showView('rotation')" style="cursor: pointer;" title="Open Crop Rotation">
+                    <span>🌾</span>
+                    <span>Crop Rotation & Management</span>
+                  </div>
+                  <div class="confidence-badge">
+                    <span>✔</span>
+                    <span>Farmer Authority</span>
+                  </div>
+                </div>
+
+                <div class="rec-body-content">
+                  <img src="/static/images/rice_crop.jpg" alt="Selected Crop" class="crop-preview-thumb">
+                  <div class="rec-text-details">
+                    <span class="rec-subhead">Currently Cultivating</span>
+                    <h3 class="rec-crop-name" id="desk-rec-crop-name">Short-Duration Rice</h3>
+                    <p class="rec-description" id="desk-rec-desc">Ground-verified cultivar with active soil and climate telemetry.</p>
+                  </div>
+                </div>
+
+                <div class="rec-why-container">
+                  <div class="rec-why-title">Quick Action Hub:</div>
+                  <div class="rec-why-grid">
+                    <div class="why-item" onclick="FarmApp.showView('rotation')" style="cursor: pointer;">
+                      <span class="why-icon">🔄</span>
+                      <div>
+                        <div>Crop</div>
+                        <strong style="color: #4ade80;">Rotation</strong>
+                      </div>
+                    </div>
+                    <div class="why-item" onclick="FarmApp.showView('methods')" style="cursor: pointer;">
+                      <span class="why-icon">🚜</span>
+                      <div>
+                        <div>Farming</div>
+                        <strong style="color: #38bdf8;">Methods</strong>
+                      </div>
+                    </div>
+                    <div class="why-item" onclick="FarmApp.showView('alerts')" style="cursor: pointer;">
+                      <span class="why-icon">⚠️</span>
+                      <div>
+                        <div>Agro</div>
+                        <strong style="color: #facc15;">Alerts</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button class="btn-view-plan" id="desk-view-plan-btn">
+                <span>View Smart Farming Guidelines</span>
+                <span>→</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- Row 3: Bottom Weather & Water Telemetry -->
+          <section class="bottom-cards-grid">
+            <div class="card-glass bottom-card" onclick="FarmApp.showView('analytics')" style="cursor: pointer;">
+              <div>
+                <div class="bottom-card-header">
+                  <span>⛅</span>
+                  <div class="bottom-card-title">Weather & Climate <span class="bottom-card-source">(from ERA5)</span></div>
+                </div>
+                <div class="weather-main-row">
+                  <span class="weather-sun-icon">☀️</span>
+                  <div>
+                    <div class="weather-temp-num" id="desk-weather-temp">31.2°C</div>
+                    <div class="weather-condition-lbl">Live Reanalysis</div>
+                  </div>
+                </div>
+                <div class="weather-stats-row">
+                  <span id="desk-weather-hum">72% Humidity</span>
+                  <span id="desk-weather-wind">8 km/h Wind</span>
+                  <span id="desk-weather-rain">0 mm Rain (Today)</span>
+                </div>
+              </div>
+              <div style="height: 32px; width: 100%;">
+                <canvas id="chart-weather-spark" class="sparkline-canvas"></canvas>
+              </div>
+            </div>
+
+            <div class="card-glass bottom-card">
+              <div>
+                <div class="bottom-card-header">
+                  <span style="color: #38bdf8;">💧</span>
+                  <div class="bottom-card-title">Water Balance <span class="bottom-card-source">(OpenET)</span></div>
+                </div>
+                <div class="water-metric-num">3.2 mm/day</div>
+                <div class="water-metric-status">Optimal Moisture</div>
+                <div style="height: 40px; width: 100%;">
+                  <canvas id="chart-water-usage" class="sparkline-canvas"></canvas>
+                </div>
+              </div>
+              <div class="water-savings-pill">
+                <span>🌿</span>
+                <span>Sustainable root-zone retention</span>
+              </div>
+            </div>
+
+            <div class="card-glass bottom-card" onclick="FarmApp.showView('rotation')" style="cursor: pointer;">
+              <div>
+                <div class="bottom-card-header">
+                  <span style="color: #22c55e;">🔄</span>
+                  <div class="bottom-card-title">Crop Rotation Recommendation</div>
+                </div>
+                <div style="font-size: 13px; font-weight: 700; color: #fff; margin-top: 6px;">Next: Black Gram (VBN-8)</div>
+                <p style="font-size: 11.5px; color: #94a3b8; line-height: 1.4; margin-top: 4px;">Legume rotation fixes atmospheric nitrogen following rice crop.</p>
+              </div>
+              <div class="market-info-note" style="margin-top: 10px;">
+                <span>ℹ️</span>
+                <span>Farmer choice required before adoption.</span>
+              </div>
+            </div>
+
+            <div class="card-glass bottom-card" onclick="FarmApp.showView('alerts')" style="cursor: pointer;">
+              <div>
+                <div class="bottom-card-header">
+                  <span style="color: #38bdf8;">🔔</span>
+                  <div class="bottom-card-title">Active Field Alerts</div>
+                </div>
+                <div style="font-size: 13px; font-weight: 700; color: #4ade80; margin-top: 6px;">All Conditions Favorable</div>
+                <p style="font-size: 11.5px; color: #94a3b8; line-height: 1.4; margin-top: 4px;">Monsoon watch active. Drainage bunds intact.</p>
+              </div>
+              <div class="water-savings-pill" style="margin-top: 10px;">
+                <span>✓</span>
+                <span>3 Active Monitoring Signals</span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           2. SECTION: MY FARMS (Multi-Plot Management)
+           =================================================================== -->
+      <div id="view-my-farms" class="app-section-view" style="display: none;">
+        <div class="view-page-header">
+          <div class="view-header-title-group">
+            <h2><span>🚜</span> My Registered Farmlands</h2>
+            <p class="view-header-subtitle">Manage registered agricultural plots, view confirmed boundaries, and switch active fields</p>
+          </div>
+          <button class="btn-pill btn-primary-green btn-trigger-add-farm">
+            <span>+ Add Farmland</span>
+          </button>
+        </div>
+
+        <div id="my-farms-empty-state" style="display: none;" class="overview-empty-hero-card">
+          <div class="empty-hero-icon">📍</div>
+          <h2 class="empty-hero-title">No Farm Added Yet</h2>
+          <p class="empty-hero-desc">Add your farm to start monitoring, analysing and managing your farmland with calibrated NASA Earth observation.</p>
+          <button class="btn-pill btn-primary-green btn-trigger-add-farm">
+            <span>+ Add Farm</span>
+          </button>
+        </div>
+
+        <div id="my-farms-grid" class="my-farms-grid"></div>
+      </div>
+
+      <!-- ===================================================================
+           3. SECTION: FARM LOCATION (Interactive GIS Map)
+           =================================================================== -->
+      <div id="view-location" class="app-section-view" style="display: none;">
+        <div class="view-page-header">
+          <div class="view-header-title-group">
+            <h2><span>🛰️</span> Geographical Farm Intelligence & Satellite GIS</h2>
+            <p class="view-header-subtitle">Field boundary coordinates, real-time geodesic area measurement, and multi-spectral satellite overlays</p>
+          </div>
+          <button class="btn-pill btn-outline-green" id="gis-map-fullscreen-btn">
+            <span>Fullscreen GIS</span>
+            <span>⛶</span>
+          </button>
+        </div>
+
+        <div class="card-glass gis-map-card">
+          <div class="gis-map-top-bar">
+            <div class="map-layer-pills">
+              <button class="map-layer-btn active" data-map-layer="satellite">True Color Satellite</button>
+              <button class="map-layer-btn" data-map-layer="street">Topographical Street</button>
+              <button class="map-layer-btn" data-map-layer="ndvi">NDVI Vegetation Health</button>
+              <button class="map-layer-btn" data-map-layer="moisture">Soil Moisture Zonation</button>
+            </div>
+            <button class="btn-pill btn-primary-green btn-trigger-add-farm" style="font-size: 11.5px; padding: 5px 12px;">
+              <span>+ Register New Plot</span>
+            </button>
+          </div>
+
+          <div class="gis-map-container-wrap">
+            <div id="gis-map-view-container"></div>
+
+            <div class="gis-floating-telemetry">
+              <div class="gis-telemetry-item">
+                <span>📍 GPS:</span>
+                <strong id="gis-gps-coords">--</strong>
+              </div>
+              <div class="gis-telemetry-item">
+                <span>🌾 Farm Area:</span>
+                <div class="gis-area-badges">
+                  <span class="area-badge-chip" id="gis-area-ha">-- ha</span>
+                  <span class="area-badge-chip" id="gis-area-ac">-- acres</span>
+                </div>
+              </div>
+              <div class="gis-telemetry-item" style="font-size: 11px; color: #94a3b8; margin-top: 2px;">
+                <span>🛰️ Imagery:</span>
+                <span>Esri World Imagery (High-Resolution Satellite)</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size: 11.5px; color: #94a3b8; line-height: 1.5; padding: 6px 4px;">
+            <strong>Data Disclosure:</strong> High-resolution optical satellite imagery provided by Esri & Maxar. Farm boundaries are computed via spherical Earth ellipsoids (WGS84). Farm Shift clearly distinguishes your current device GPS position from the confirmed farmland perimeter.
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           4. SECTION: FARM ANALYTICS
+           =================================================================== -->
+      <div id="view-analytics" class="app-section-view" style="display: none;">
+        <div class="view-page-header">
+          <div class="view-header-title-group">
+            <h2><span>📊</span> Farm Analytics & Historical Reanalysis</h2>
+            <p class="view-header-subtitle">Multi-temporal weather reanalysis, vegetation indicators (NDVI), and root-zone soil telemetry</p>
+          </div>
+          <div id="analytics-loading-status" style="font-size: 12px; color: #38bdf8;"></div>
+        </div>
+
+        <div class="analytics-controls-bar">
+          <div class="analytics-period-group">
+            <span style="font-size: 11.5px; color: #64748b; margin-right: 4px;">Time Horizon:</span>
+            <button class="analytics-period-btn" data-period="7d">7 Days</button>
+            <button class="analytics-period-btn active" data-period="30d">30 Days</button>
+            <button class="analytics-period-btn" data-period="90d">90 Days</button>
+            <button class="analytics-period-btn" data-period="1y">1 Year</button>
+          </div>
+          <div class="indicator-tabs-group">
+            <span style="font-size: 11.5px; color: #64748b; margin-right: 4px;">Telemetry Overlay:</span>
+            <button class="indicator-tab-btn active" data-indicator="all">Composite All</button>
+            <button class="indicator-tab-btn" data-indicator="rainfall">Rainfall (mm)</button>
+            <button class="indicator-tab-btn" data-indicator="temperature">Temperature (°C)</button>
+            <button class="indicator-tab-btn" data-indicator="soil">Soil Moisture (%)</button>
+          </div>
+        </div>
+
+        <div class="analytics-summary-grid">
+          <div class="card-glass analytics-stat-card">
+            <span class="stat-card-label">Cumulative Rainfall</span>
+            <div class="stat-card-value" id="analytics-metric-rain">-- mm</div>
+            <span class="stat-card-subtext">Open-Meteo & ERA5 Blend</span>
+          </div>
+          <div class="card-glass analytics-stat-card">
+            <span class="stat-card-label">Mean Temperature</span>
+            <div class="stat-card-value" id="analytics-metric-temp">-- °C</div>
+            <span class="stat-card-subtext">Regional historical baseline</span>
+          </div>
+          <div class="card-glass analytics-stat-card">
+            <span class="stat-card-label">Peak Temperature</span>
+            <div class="stat-card-value" id="analytics-metric-max">-- °C</div>
+            <span class="stat-card-subtext">Thermal comfort threshold</span>
+          </div>
+          <div class="card-glass analytics-stat-card">
+            <span class="stat-card-label">Root-Zone Soil Moisture</span>
+            <div class="stat-card-value" id="analytics-metric-moist">68%</div>
+            <span class="stat-card-subtext">Adequate root hydration</span>
+          </div>
+        </div>
+
+        <div class="card-glass analytics-main-chart-card">
+          <div class="chart-header-row">
+            <h3 style="font-size: 15px; font-weight: 700; color: #fff;">Historical Meteorological & Soil Dynamics</h3>
+            <div class="chart-legend-wrap">
+              <span style="color: #38bdf8;">■ Rainfall (Bars)</span>
+              <span style="color: #f97316;">— Temperature (°C)</span>
+              <span style="color: #22c55e;">— Root-Zone Moisture (%)</span>
+            </div>
+          </div>
+          <canvas id="analytics-main-chart" style="width: 100%; height: 260px;"></canvas>
+        </div>
+
+        <div class="analytics-obs-grid">
+          <div class="card-glass analytics-obs-card">
+            <h3 style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">🛰️ Crop Growth & Satellite Observations</h3>
+            <p style="font-size: 12px; color: #94a3b8;">Recorded from Landsat-9, Sentinel-2 (10m), and ground agro-meteorological stations.</p>
+            <div class="analytics-obs-list" id="analytics-observations-list"></div>
+          </div>
+
+          <div class="analytics-disclaimer-box">
+            <h4 style="color: #38bdf8; font-size: 13px; font-weight: 700; margin-bottom: 6px;">ℹ️ Earth Observation Data Limitations</h4>
+            <p>• Optical NDVI measurements require cloud-free satellite passes (<20% cloud cover). In-situ soil pH testing remains recommended prior to micro-nutrient dressings.</p>
+            <p style="margin-top: 8px;">• Soil moisture measurements represent 0–7cm topsoil layer. Deep aquifer percolation is modelled via OpenET energy balance equations.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           5. SECTION: CROP ROTATION (Dedicated Section 5 & 6)
+           =================================================================== -->
+      <div id="view-rotation" class="app-section-view" style="display: none;">
+        <div class="view-page-header">
+          <div class="view-header-title-group">
+            <h2><span>🔄</span> Crop Rotation Recommendation Engine</h2>
+            <p class="view-header-subtitle">Agro-ecological rotation sequences analyzing previous crops, nitrogen fixation, soil characteristics, and disease cycle disruption</p>
+          </div>
+          <div id="rotation-active-farm-pill" style="font-size: 12px; color: #4ade80;"></div>
+        </div>
+
+        <div id="rotation-empty-state" style="display: none;" class="overview-empty-hero-card">
+          <div class="empty-hero-icon">🌾</div>
+          <h2 class="empty-hero-title">No Farm Added Yet</h2>
+          <p class="empty-hero-desc">Add your farm to generate tailored crop rotation plans based on your actual soil type, water availability, and cropping history.</p>
+          <button class="btn-pill btn-primary-green btn-trigger-add-farm">
+            <span>+ Add Farm</span>
+          </button>
+        </div>
+
+        <div id="rotation-cards-container" style="display: flex; flex-direction: column;"></div>
+      </div>
+
+      <!-- ===================================================================
+           6. SECTION: FARMING RECOMMENDATIONS (Smart Farming Methods - Section 7)
+           =================================================================== -->
+      <div id="view-methods" class="app-section-view" style="display: none;">
+        <div class="view-page-header">
+          <div class="view-header-title-group">
+            <h2><span>🚜</span> Smart Farming Methods & Crop Management</h2>
+            <p class="view-header-subtitle">Crop-specific land preparation, precision planting, water conservation, IPM, and harvest timing</p>
+          </div>
+        </div>
+
+        <div id="methods-empty-state" style="display: none;" class="overview-empty-hero-card">
+          <div class="empty-hero-icon">🌱</div>
+          <h2 class="empty-hero-title">No Farm Added Yet</h2>
+          <p class="empty-hero-desc">Register your farmland to unlock verified crop management guidelines, seed treatment protocols, and soil conservation practices.</p>
+          <button class="btn-pill btn-primary-green btn-trigger-add-farm">
+            <span>+ Add Farm</span>
+          </button>
+        </div>
+
+        <div id="methods-content-container" style="display: none;">
+          <div class="card-glass" style="padding: 20px; margin-bottom: 16px; border-left: 4px solid #22c55e;">
+            <h3 id="methods-crop-heading" style="font-size: 18px; font-weight: 800; color: #fff;">Rice (Oryza sativa) - High-Vigor Cultivation</h3>
+            <span id="methods-crop-subtitle" style="font-size: 12.5px; color: #94a3b8;">Tailored for your registered plot</span>
+            <p id="methods-caution-text" style="font-size: 11.5px; color: #38bdf8; margin-top: 8px;">These recommendations are calibrated with agricultural university standards. Verify local field conditions prior to critical operations.</p>
+          </div>
+
+          <div class="methods-modules-grid" id="methods-modules-grid"></div>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           7. SECTION: ALERTS (Section 8)
+           =================================================================== -->
+      <div id="view-alerts" class="app-section-view" style="display: none;">
+        <div class="view-page-header">
+          <div class="view-header-title-group">
+            <h2><span>🔔</span> Agricultural Telemetry Alerts</h2>
+            <p class="view-header-subtitle">Real-time risk monitoring for heavy precipitation, thermal stress, moisture deficit, and pest risk</p>
+          </div>
+        </div>
+
+        <div id="alerts-empty-state" style="display: none;" class="overview-empty-hero-card">
+          <div class="empty-hero-icon">🛡️</div>
+          <h2 class="empty-hero-title">0 Alerts — No Farm Registered</h2>
+          <p class="empty-hero-desc">Register your farm to activate automated micro-climate alerts and agricultural risk warnings.</p>
+          <button class="btn-pill btn-primary-green btn-trigger-add-farm">
+            <span>+ Add Farm</span>
+          </button>
+        </div>
+
+        <div class="alerts-list-container" id="alerts-list-container"></div>
+      </div>
+
+      <!-- ===================================================================
+           8. SECTION: SETTINGS (Section 8)
+           =================================================================== -->
+      <div id="view-settings" class="app-section-view" style="display: none;">
+        <div class="view-page-header">
+          <div class="view-header-title-group">
+            <h2><span>⚙️</span> Farm Profile & System Settings</h2>
+            <p class="view-header-subtitle">Manage farm coordinates, operational parameters, measurement units, and telemetry synchronization</p>
+          </div>
+        </div>
+
+        <form id="settings-main-form">
+          <div class="settings-grid-layout">
+            <div class="card-glass settings-card">
+              <h3 class="settings-section-title"><span>🌿</span> Farm & Geographical Identity</h3>
+              <div class="form-group">
+                <label>Farm or Agro Plot Name</label>
+                <input type="text" class="form-control" id="settings-farm-name" placeholder="Enter farm name">
+              </div>
+              <div class="form-group">
+                <label>Primary Farm Operator / Owner</label>
+                <input type="text" class="form-control" id="settings-operator" placeholder="Farmer name">
+              </div>
+              <div class="settings-form-row">
+                <div class="form-group">
+                  <label>Country</label>
+                  <input type="text" class="form-control" id="settings-country" value="India">
+                </div>
+                <div class="form-group">
+                  <label>State / Province</label>
+                  <input type="text" class="form-control" id="settings-state" value="Kerala">
+                </div>
+              </div>
+              <div class="settings-form-row">
+                <div class="form-group">
+                  <label>District / Region</label>
+                  <input type="text" class="form-control" id="settings-district" value="Thrissur">
+                </div>
+                <div class="form-group">
+                  <label>Cloud Cover Tolerance (%)</label>
+                  <input type="number" min="0" max="100" class="form-control" id="settings-cloud-tol" value="20">
+                </div>
+              </div>
+            </div>
+
+            <div class="card-glass settings-card">
+              <h3 class="settings-section-title"><span>🌐</span> Measurement & Display</h3>
+              <div class="form-group">
+                <label>Measurement Units System</label>
+                <select class="form-control" id="settings-units">
+                  <option value="metric">Metric (°C, mm, hectares, kg)</option>
+                  <option value="imperial">Imperial (°F, inches, acres, lbs)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Language Preference</label>
+                <select class="form-control" id="settings-language">
+                  <option value="en">English (Default)</option>
+                  <option value="ml">മലയാളം (Malayalam)</option>
+                  <option value="hi">हिन्दी (Hindi)</option>
+                  <option value="es">Español (Spanish)</option>
+                </select>
+              </div>
+
+              <div style="margin-top: 28px; display: flex; flex-direction: column; gap: 10px;">
+                <button type="submit" class="btn-pill btn-primary-green" style="width: 100%; padding: 12px;">
+                  <span>Save Settings & Sync Telemetry</span>
+                  <span>✓</span>
+                </button>
+                <button type="button" class="btn-pill btn-outline-green" id="btn-settings-export-json" style="width: 100%;">
+                  <span>Export Farm Intelligence (JSON)</span>
+                  <span>⤓</span>
+                </button>
+                <button type="button" class="btn-pill" id="btn-settings-reset-baseline" style="width: 100%; background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3);">
+                  <span>Clear All Farm Records / Reset</span>
+                  <span>↺</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </main>
+  </div>
+
+
+  <!-- =======================================================================
+       2. MOBILE VERSION (< 1024px)
+       ======================================================================= -->
+  <div class="mobile-app-wrapper" id="mobile-view">
+    <div class="mobile-status-bar">
+      <span>9:41</span>
+      <div class="mobile-status-icons">
+        <span>📶</span>
+        <span>⚡ 100</span>
+      </div>
+    </div>
+
+    <header class="mobile-header">
+      <div class="mobile-brand-group">
+        <img src="/static/images/nasa_mobile_logo.png" alt="NASA Logo" class="mobile-nasa-logo">
+        <div class="mobile-title-block">
+          <div class="mobile-app-name">
+            <span>Field</span> <span class="accent-shift">Shift</span> <span>🌿</span>
+          </div>
+          <div class="mobile-app-subtitle">Smart Farm Management V2+</div>
+        </div>
+      </div>
+      <div class="mobile-header-actions">
+        <button class="mobile-notif-btn" title="Alerts" onclick="FarmApp.showView('alerts')">
+          <span>🔔</span>
+          <span class="notif-dot"></span>
+        </button>
+        <div class="mobile-profile-avatar" title="Settings" onclick="FarmApp.showView('settings')">B</div>
+      </div>
+    </header>
+
+    <div class="mobile-location-row">
+      <button class="mobile-loc-pill" id="mob-location-btn">
+        <span style="color: #f87171;">📍</span>
+        <span id="mob-location-text">No Farm Added</span>
+        <span style="color: #94a3b8; font-size: 11px;">⌄</span>
+      </button>
+      <button class="btn-pill btn-primary-green btn-trigger-add-farm" style="font-size: 11.5px; padding: 6px 12px;">
+        <span>+ Add Farm</span>
+      </button>
+    </div>
+
+    <main class="mobile-content">
+      <!-- Mobile Empty State -->
+      <div id="mobile-overview-empty" style="display: none;" class="overview-empty-hero-card">
+        <div class="empty-hero-icon">🌱</div>
+        <h3 class="empty-hero-title" style="font-size: 20px;">No Farm Added Yet</h3>
+        <p class="empty-hero-desc" style="font-size: 13px;">Add your farm to start monitoring, analysing and managing your farmland.</p>
+        <button class="btn-pill btn-primary-green btn-trigger-add-farm">
+          <span>+ Add Farm</span>
+        </button>
+      </div>
+
+      <!-- Mobile Registered State -->
+      <div id="mobile-overview-registered">
+        <section class="card-glass mobile-farm-card">
+          <div class="mobile-farm-header">
+            <div class="mobile-farm-title-group">
+              <div class="mobile-farm-icon-circle">🌿</div>
+              <div class="mobile-farm-titles">
+                <h3>Farm Overview</h3>
+                <p>Live farm telemetry</p>
+              </div>
+            </div>
+            <button class="mobile-btn-edit" onclick="FarmApp.openEditModal()">
+              <span>✎</span>
+              <span>Edit</span>
+            </button>
+          </div>
+
+          <div class="mobile-map-box" id="mobile-map-box" onclick="FarmApp.showView('location')">
+            <div class="mobile-map-toggles">
+              <button class="mobile-map-pill active">
+                <span>🛰️ Satellite</span>
+              </button>
+            </div>
+            <img src="/static/images/farm_satellite.jpg" alt="Farm Satellite" class="map-background-img" id="mobile-map-img">
+            <div style="position: absolute; top: 40%; left: 48%; transform: translate(-50%, -50%); z-index: 10;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="#ffffff" filter="drop-shadow(0 2px 8px rgba(0,0,0,0.8))">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/>
+              </svg>
+            </div>
+          </div>
+        </section>
+
+        <section class="mobile-metrics-grid" id="mobile-metrics-grid">
+          <div class="card-glass mobile-metric-card" onclick="FarmApp.showView('methods')">
+            <div class="mobile-m-top">
+              <span class="mobile-m-icon" style="color: #4ade80;">🌿</span>
+              <span class="mobile-m-label">Current Crop</span>
+            </div>
+            <div class="mobile-m-val-row">
+              <span class="mobile-m-val" id="mob-crop-val" style="font-size: 16px;">Rice</span>
+              <span class="mobile-m-badge badge-trend-up">Active</span>
+            </div>
+          </div>
+
+          <div class="card-glass mobile-metric-card" onclick="FarmApp.showView('location')">
+            <div class="mobile-m-top">
+              <span class="mobile-m-icon" style="color: #60a5fa;">📐</span>
+              <span class="mobile-m-label">Farm Area</span>
+            </div>
+            <div class="mobile-m-val-row">
+              <span class="mobile-m-val" id="mob-rain-val">4.5 ha</span>
+              <span class="mobile-m-badge" style="color: #4ade80;">Verified</span>
+            </div>
+          </div>
+
+          <div class="card-glass mobile-metric-card" onclick="FarmApp.showView('analytics')">
+            <div class="mobile-m-top">
+              <span class="mobile-m-icon" style="color: #4ade80;">🌱</span>
+              <span class="mobile-m-label">Soil Moisture</span>
+            </div>
+            <div class="mobile-m-val-row">
+              <span class="mobile-m-val" id="mob-soil-val">68%</span>
+              <span class="mobile-m-badge badge-trend-up">Optimal</span>
+            </div>
+          </div>
+
+          <div class="card-glass mobile-metric-card" onclick="FarmApp.showView('analytics')">
+            <div class="mobile-m-top">
+              <span class="mobile-m-icon" style="color: #f97316;">🌡️</span>
+              <span class="mobile-m-label">Temperature</span>
+            </div>
+            <div class="mobile-m-val-row">
+              <span class="mobile-m-val" id="mob-temp-val">31.2°C</span>
+              <span class="mobile-m-badge badge-trend-up">Normal</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card-glass mobile-rec-card">
+          <div class="mobile-rec-header">
+            <div class="mobile-rec-heading">
+              <span style="color: #4ade80; font-size: 17px;">🔄</span>
+              <span>Crop Rotation & Methods</span>
+            </div>
+            <div class="confidence-badge">
+              <span>Farmer Choice</span>
+            </div>
+          </div>
+          <div class="mobile-rec-body">
+            <img src="/static/images/rice_crop.jpg" alt="Rice Crop" class="mobile-rec-thumb">
+            <div class="mobile-rec-texts">
+              <h4 class="mobile-rec-title" id="mob-rec-title">Short-Duration Rice</h4>
+              <p class="mobile-rec-desc" id="mob-rec-desc">Tap below to view crop rotation options and smart farming methods.</p>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-pill btn-outline-green" onclick="FarmApp.showView('rotation')" style="flex: 1; padding: 10px;">
+              <span>Crop Rotation</span>
+            </button>
+            <button class="btn-pill btn-primary-green" onclick="FarmApp.showView('methods')" style="flex: 1; padding: 10px;">
+              <span>Farming Methods</span>
+            </button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <nav class="mobile-bottom-nav">
+      <a class="bottom-nav-item active" data-tab="overview">
+        <span class="b-icon">🏠</span>
+        <span>Overview</span>
+      </a>
+      <a class="bottom-nav-item" data-tab="my-farms">
+        <span class="b-icon">🚜</span>
+        <span>My Farms</span>
+      </a>
+      <a class="bottom-nav-item" data-tab="location">
+        <span class="b-icon">📍</span>
+        <span>Location</span>
+      </a>
+      <a class="bottom-nav-item" data-tab="rotation">
+        <span class="b-icon">🔄</span>
+        <span>Rotation</span>
+      </a>
+      <a class="bottom-nav-item" data-tab="settings">
+        <span class="b-icon">⚙️</span>
+        <span>Settings</span>
+      </a>
+    </nav>
+  </div>
+
+
+  <!-- =======================================================================
+       3. 5-STEP FARM LOCATION DETECTION WIZARD MODAL (Section 3)
+       ======================================================================= -->
+  <div class="modal-overlay" id="add-farm-wizard-modal">
+    <div class="modal-box wizard-modal-box">
+      <div class="modal-header">
+        <h3><span>🚜</span> Register Farmland</h3>
+        <button class="modal-close-btn wizard-close-btn">&times;</button>
+      </div>
+
+      <!-- Step indicator progress bar -->
+      <div class="wizard-progress-bar">
+        <div class="wizard-indicator-step active" data-step="1">1</div>
+        <div class="wizard-indicator-step" data-step="2">2</div>
+        <div class="wizard-indicator-step" data-step="3">3</div>
+        <div class="wizard-indicator-step" data-step="4">4</div>
+      </div>
+
+      <!-- STEP 1: Permission Request (Section 3 - Step 1) -->
+      <div class="wizard-step-pane" id="wizard-step-1">
+        <div style="text-align: center; padding: 10px 0 20px 0;">
+          <div style="font-size: 42px; margin-bottom: 12px;">📍</div>
+          <h4 style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 10px;">
+            We can detect your current location to help register your farm. Your permission is required.
+          </h4>
+          <p style="font-size: 13px; color: #94a3b8; line-height: 1.5; max-width: 460px; margin: 0 auto 24px auto;">
+            Your location will be used to automatically retrieve satellite weather, soil moisture, and regional agro-ecological indices. Farm Shift never conducts background tracking.
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: 12px; max-width: 320px; margin: 0 auto;">
+            <button class="btn-pill btn-primary-green" id="btn-wizard-allow-geo" style="padding: 12px 20px; font-size: 14px;">
+              <span>📍 Allow Location Access</span>
+            </button>
+            <button class="btn-pill btn-outline-green" id="btn-wizard-manual-entry" style="padding: 11px 20px;">
+              <span>⌨️ Enter Location Manually</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Detecting Location Animation (Section 3 - Step 2) -->
+      <div class="wizard-step-pane" id="wizard-step-2" style="display: none;">
+        <div style="text-align: center; padding: 40px 20px;" id="wizard-detect-status">
+          <div class="spinner-dot" style="width: 24px; height: 24px; margin-bottom: 16px;"></div>
+          <h4 style="font-size: 17px; font-weight: 700; color: #fff;">Detecting Device Geographical Position...</h4>
+          <p style="font-size: 12.5px; color: #94a3b8; margin-top: 6px;">Requesting GPS coordinates and querying regional geocoding...</p>
+        </div>
+      </div>
+
+      <!-- STEP 3: Verify Location (Section 3 - Step 3) -->
+      <div class="wizard-step-pane" id="wizard-step-3" style="display: none;">
+        <h4 style="font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 6px;">Is this your farm's location?</h4>
+        <p style="font-size: 12px; color: #94a3b8; margin-bottom: 14px;">
+          Detected: <strong id="wizard-verify-loc-name" style="color: #4ade80;">--</strong> (<span id="wizard-verify-coords">--</span>, <span id="wizard-verify-accuracy">--</span>). If this is not your actual farmland, please adjust the marker.
+        </p>
+
+        <!-- Leaflet Verification Map Container -->
+        <div class="wizard-verify-map-box" id="wizard-verify-map-container"></div>
+
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; margin-top: 14px;">
+          <button class="btn-pill" id="btn-wizard-detect-again" style="background: rgba(255,255,255,0.06); color: #cbd5e1;">
+            <span>Detect Again</span>
+          </button>
+          <button class="btn-pill btn-outline-green" id="btn-wizard-adjust-loc">
+            <span>Adjust Location</span>
+          </button>
+          <button class="btn-pill" id="btn-wizard-manual-from-3" style="background: rgba(255,255,255,0.06); color: #cbd5e1;">
+            <span>Enter Manually</span>
+          </button>
+          <button class="btn-pill btn-primary-green" id="btn-wizard-confirm-loc">
+            <span>Yes, this is correct ✓</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 4: Mark Farmland Characteristics (Section 3 - Step 4 & Section 4) -->
+      <div class="wizard-step-pane" id="wizard-step-4" style="display: none;">
+        <h4 style="font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 4px;">Farmland Characteristics & Soil Profile</h4>
+        <p style="font-size: 12px; color: #94a3b8; margin-bottom: 16px;">
+          Distinguishing device GPS position from actual farm boundary. Enter your land intelligence:
+        </p>
+
+        <form id="wizard-farm-details-form">
+          <div class="settings-form-row">
+            <div class="form-group">
+              <label>Farm Plot Name</label>
+              <input type="text" class="form-control" id="wiz-farm-name" value="Green Valley Field" required>
+            </div>
+            <div class="form-group">
+              <label>Farmer / Operator Name</label>
+              <input type="text" class="form-control" id="wiz-operator-name" value="Farm Operator" required>
+            </div>
+          </div>
+
+          <div class="settings-form-row">
+            <div class="form-group">
+              <label>Confirmed Location</label>
+              <input type="text" class="form-control" id="wiz-farm-location" required>
+            </div>
+            <div class="form-group">
+              <label>Farmland Area (Hectares)</label>
+              <input type="number" step="0.1" min="0.1" class="form-control" id="wiz-farm-acreage" value="2.5" required>
+            </div>
+          </div>
+
+          <input type="hidden" id="wiz-farm-lat">
+          <input type="hidden" id="wiz-farm-lng">
+
+          <div class="settings-form-row">
+            <div class="form-group">
+              <label>Land & Agro Type</label>
+              <select class="form-control" id="wiz-land-type">
+                <option value="Wetland / Paddy Field">Wetland / Paddy Field</option>
+                <option value="River Basin Alluvium">River Basin Alluvium</option>
+                <option value="Midland Laterite">Midland Laterite</option>
+                <option value="Coastal Lowland">Coastal Lowland / Saline Tract</option>
+                <option value="Highland Hill Tract">Highland Hill Tract</option>
+                <option value="Dryland / Rainfed">Dryland / Rainfed</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Soil Classification</label>
+              <select class="form-control" id="wiz-soil-type">
+                <option value="Alluvial Clay Loam">Alluvial Clay Loam</option>
+                <option value="Laterite Soil">Laterite Soil</option>
+                <option value="Acid Saline Soil (Pokkali)">Acid Saline Soil (Pokkali)</option>
+                <option value="Red Sandy Loam">Red Sandy Loam</option>
+                <option value="Clay Loam">Clay Loam</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="settings-form-row">
+            <div class="form-group">
+              <label>Soil pH (Optional / If Tested)</label>
+              <input type="number" step="0.1" class="form-control" id="wiz-soil-ph" value="6.5">
+            </div>
+            <div class="form-group">
+              <label>Irrigation Availability</label>
+              <select class="form-control" id="wiz-irrigation">
+                <option value="Canal / Bund Controlled">Canal / Bund Controlled</option>
+                <option value="Well / Borewell">Well / Borewell</option>
+                <option value="Drip / Sprinkler Micro-jet">Drip / Sprinkler Micro-jet</option>
+                <option value="Rainfed Only">Rainfed Only</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="settings-form-row">
+            <div class="form-group">
+              <label>Previous Crop Cultivated</label>
+              <select class="form-control" id="wiz-prev-crop">
+                <option value="Long-Duration Paddy">Long-Duration Traditional Paddy</option>
+                <option value="Pulses / Fallow">Pulses / Fallow</option>
+                <option value="Banana / Plantain">Banana / Plantain</option>
+                <option value="Vegetables">Vegetables</option>
+                <option value="None / Virgin Land">None / Virgin Land</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Current / Selected Crop</label>
+              <select class="form-control" id="wiz-current-crop">
+                <option value="Short-Duration Rice">Short-Duration Rice (Jyothi PTB 39)</option>
+                <option value="Pokkali Organic Tidal Rice">Pokkali Organic Tidal Rice</option>
+                <option value="Black Gram / Urad Dal">Black Gram / Urad Dal</option>
+                <option value="Plantain / Banana">Plantain / Banana</option>
+                <option value="Cassava / Tapioca">Cassava / Tapioca</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px; border-top: 1px solid var(--border-subtle); padding-top: 14px;">
+            <button type="button" class="btn-pill" id="btn-wizard-back-to-3" style="background: rgba(255,255,255,0.06); color: #cbd5e1;">
+              <span>← Back to Map</span>
+            </button>
+            <button type="submit" class="btn-pill btn-primary-green" style="padding: 12px 24px;">
+              <span>Complete Registration & Open Dashboard</span>
+              <span>✓</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- =======================================================================
+       4. FARMER DECISION AUTHORITY MODAL (Section 6)
+       ======================================================================= -->
+  <div class="modal-overlay" id="farmer-decision-modal">
+    <div class="modal-box" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3><span>🌾</span> Farmer Crop Decision Authority</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div style="font-size: 13.5px; line-height: 1.6; color: #cbd5e1;">
+        <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34,197,94,0.3); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+          <span style="font-size: 11px; text-transform: uppercase; color: #4ade80; font-weight: 700;">Proposed Cultivar Adoption</span>
+          <h4 id="decision-crop-name" style="color: #fff; font-size: 18px; font-weight: 800; margin-top: 2px;">--</h4>
+          <span id="decision-crop-variety" style="font-size: 12px; color: #94a3b8;">--</span>
+        </div>
+
+        <p style="margin-bottom: 10px;">
+          <strong>Plot:</strong> <span id="decision-farm-name">--</span><br>
+          <strong>Previous Crop:</strong> <span id="decision-current-crop">--</span>
+        </p>
+
+        <div style="background: rgba(0,0,0,0.25); border-radius: 10px; padding: 12px; margin-bottom: 16px;">
+          <strong style="color: #38bdf8; font-size: 12px;">Agronomic Rationale:</strong>
+          <p id="decision-rationale" style="font-size: 12px; color: #e2e8f0; margin-top: 4px;">--</p>
+        </div>
+
+        <p style="font-size: 11.5px; color: #facc15; margin-bottom: 18px;">
+          ⚠️ <em>Farm Shift AI serves strictly as an agricultural advisory assistant. You retain total authority over your farmland and can reject or change this recommendation at any time.</em>
+        </p>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn-pill modal-close-btn" style="background: rgba(255,255,255,0.06); color: #cbd5e1;">
+            Cancel
+          </button>
+          <button type="button" class="btn-pill btn-primary-green" id="btn-decision-confirm-adoption">
+            <span>Confirm & Adopt Cultivar</span>
+            <span>✓</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- =======================================================================
+       5. EDIT CHARACTERISTICS MODAL
+       ======================================================================= -->
+  <div class="modal-overlay" id="edit-farm-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3><span>🌿</span> Update Farm Characteristics</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <form id="edit-farm-form">
+        <div class="form-group">
+          <label>Current Crop</label>
+          <input type="text" class="form-control" id="edit-crop" required>
+        </div>
+        <div class="form-group">
+          <label>Acreage (Hectares)</label>
+          <input type="number" step="0.1" class="form-control" id="edit-acreage" required>
+        </div>
+        <div class="form-group">
+          <label>Growth Stage</label>
+          <select class="form-control" id="edit-stage">
+            <option value="Sowing & Germination">Sowing & Germination</option>
+            <option value="Tillering & Vegetative Growth">Tillering & Vegetative Growth</option>
+            <option value="Panicle Initiation">Panicle Initiation</option>
+            <option value="Flowering & Grain Filling">Flowering & Grain Filling</option>
+            <option value="Ripening & Harvest">Ripening & Harvest</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Soil pH Level</label>
+          <input type="number" step="0.1" class="form-control" id="edit-ph" required>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="btn-pill modal-close-btn" style="background: rgba(255,255,255,0.06); color: #cbd5e1;">Cancel</button>
+          <button type="submit" class="btn-pill btn-primary-green">Save Characteristics</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- Floating Viewport Switcher -->
+  <div class="viewport-switch-bar">
+    <button class="viewport-switch-btn active" id="switch-auto" title="Responsive Auto mode based on browser width">
+      <span>🔄</span>
+      <span>Auto</span>
+    </button>
+    <button class="viewport-switch-btn" id="switch-desktop" title="Force Desktop Dashboard reproduction">
+      <span>🖥️</span>
+      <span>PC</span>
+    </button>
+    <button class="viewport-switch-btn" id="switch-mobile" title="Force Mobile Phone layout reproduction">
+      <span>📱</span>
+      <span>Mobile</span>
+    </button>
+  </div>
+
+  <!-- Application Scripts (Pure HTML5 & Vanilla JavaScript Stack) -->
+  <script src="/static/vendor/leaflet/leaflet.js"></script>
+  <script src="/static/js/intelligence.js"></script>
+  <script src="/static/js/charts.js"></script>
+  <script src="/static/js/analytics.js"></script>
+  <script src="/static/js/advisor.js"></script>
+  <script src="/static/js/crop_rotation.js"></script>
+  <script src="/static/js/smart_methods.js"></script>
+  <script src="/static/js/alerts.js"></script>
+  <script src="/static/js/my_farms.js"></script>
+  <script src="/static/js/map.js"></script>
+  <script src="/static/js/map_v2.js"></script>
+  <script src="/static/js/farm_manager.js"></script>
+  <script src="/static/js/registration.js"></script>
+  <script src="/static/js/settings.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "registered_farms": [],
+  "active_farm_id": null,
+  "settings": {
+    "units": "metric",
+    "language": "en",
+    "highContrast": false
+  }
+}

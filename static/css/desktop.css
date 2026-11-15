@@ -1,0 +1,1418 @@
+/* ==========================================================================
+   FARM SHIFT V1 - DESKTOP LAYOUT (>= 1024px)
+   Pixel-accurate reproduction of Field Shift NASA Farm Insights Dashboard
+   ========================================================================== */
+
+.desktop-app-wrapper {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-space);
+  color: var(--text-main);
+  position: relative;
+}
+
+/* --------------------------------------------------------------------------
+   SIDEBAR
+   -------------------------------------------------------------------------- */
+.sidebar {
+  width: 236px;
+  min-width: 236px;
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 24px 16px 0 16px;
+  overflow: hidden;
+}
+
+.sidebar-top {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Brand Logo */
+.brand-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-left: 6px;
+}
+
+.brand-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(16, 185, 129, 0.05));
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px rgba(34, 197, 94, 0.2);
+}
+
+.brand-text-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: #ffffff;
+  line-height: 1.15;
+}
+
+.brand-subtitle {
+  font-size: 10.5px;
+  color: #94a3b8;
+  font-weight: 500;
+  line-height: 1.25;
+  margin-top: 2px;
+}
+
+/* Navigation Menu */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 16px;
+  border-radius: var(--radius-pill);
+  color: #94a3b8;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.nav-link.active {
+  background: #166534;
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(22, 101, 52, 0.4);
+}
+
+.nav-link .nav-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.85;
+}
+
+.nav-link.active .nav-icon {
+  opacity: 1;
+}
+
+/* Sidebar Bottom (NASA & Earth Graphic) */
+.sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  padding-bottom: 0;
+  margin-top: auto;
+}
+
+.nasa-sidebar-logo {
+  width: 72px;
+  height: auto;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.3));
+}
+
+.sidebar-mission-text {
+  font-size: 11px;
+  font-style: italic;
+  color: #94a3b8;
+  line-height: 1.35;
+  margin-bottom: 14px;
+}
+
+.sidebar-earth-glow {
+  width: calc(100% + 32px);
+  margin-left: -16px;
+  margin-right: -16px;
+  margin-bottom: -4px;
+  height: 95px;
+  object-fit: cover;
+  pointer-events: none;
+  filter: saturate(1.2) contrast(1.1);
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   MAIN DESKTOP CONTENT AREA
+   -------------------------------------------------------------------------- */
+.desktop-main {
+  flex: 1;
+  padding: 18px 24px 30px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* Top Bar */
+.desktop-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 2px 8px 2px;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Location Selector Pill */
+.location-selector-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.location-selector-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.location-icon {
+  color: #f87171;
+  width: 14px;
+  height: 14px;
+}
+
+.chevron-icon {
+  color: var(--text-muted);
+  width: 12px;
+  height: 12px;
+}
+
+.last-updated-text {
+  font-size: 12px;
+  color: #94a3b8;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.nasa-powered-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: #4ade80;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.user-avatar-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.user-avatar-btn:hover {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: #22c55e;
+}
+
+/* --------------------------------------------------------------------------
+   ROW 1: 4 KPI CARDS
+   -------------------------------------------------------------------------- */
+.kpi-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.kpi-card {
+  padding: 16px 18px 14px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.kpi-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.kpi-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kpi-icon-wrap.green {
+  background: var(--primary-green-bg);
+  color: #4ade80;
+}
+
+.kpi-icon-wrap.blue {
+  background: var(--water-blue-bg);
+  color: #38bdf8;
+}
+
+.kpi-icon-wrap.orange {
+  background: var(--temp-orange-bg);
+  color: #f97316;
+}
+
+.kpi-icon-wrap.indigo {
+  background: var(--rain-indigo-bg);
+  color: #60a5fa;
+}
+
+.kpi-title {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.kpi-body {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.kpi-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.kpi-change-pill {
+  font-size: 11.5px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.kpi-sparkline-wrap {
+  width: 100%;
+  height: 32px;
+}
+
+/* Bar Sparkline for Rainfall */
+.mini-bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 32px;
+  width: 100%;
+  padding-top: 4px;
+}
+
+.mini-bar {
+  flex: 1;
+  background: #38bdf8;
+  border-radius: 2px 2px 0 0;
+  transition: height 0.3s ease;
+  opacity: 0.85;
+}
+
+.mini-bar:hover {
+  opacity: 1;
+  background: #60a5fa;
+}
+
+/* --------------------------------------------------------------------------
+   ROW 2: MIDDLE SECTION (FARM OVERVIEW + AI RECOMMENDATION)
+   -------------------------------------------------------------------------- */
+.middle-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 14px;
+}
+
+/* Farm Field Overview Card */
+.field-overview-card {
+  padding: 16px 18px 18px 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-top-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-heading-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.layer-toggle-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 3px;
+  border-radius: var(--radius-pill);
+}
+
+.layer-toggle-btn {
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 11.5px;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.layer-toggle-btn.active {
+  background: #22c55e;
+  color: #052e16;
+  font-weight: 700;
+}
+
+.layer-toggle-btn:hover:not(.active) {
+  color: #ffffff;
+}
+
+/* Map Container */
+.map-canvas-container {
+  width: 100%;
+  height: 310px;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #060b13;
+}
+
+.map-background-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Neon Polygon & Field Badge */
+.field-marker-badge {
+  position: absolute;
+  top: 28%;
+  left: 45%;
+  background: rgba(11, 17, 29, 0.92);
+  border: 1px solid rgba(34, 197, 94, 0.5);
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+}
+
+.field-marker-badge .field-health-num {
+  font-size: 11px;
+  color: #facc15;
+  font-weight: 600;
+}
+
+.field-marker-badge::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 20px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgba(11, 17, 29, 0.92);
+}
+
+/* Left Vertical Health Legend Bar */
+.map-legend-vertical {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: rgba(11, 17, 29, 0.88);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 10;
+}
+
+.legend-bar-gradient {
+  width: 12px;
+  height: 110px;
+  border-radius: 6px;
+  background: linear-gradient(to bottom, #22c55e 0%, #eab308 50%, #ef4444 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.legend-text-labels {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 110px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.legend-text-labels .lbl-healthy {
+  color: #4ade80;
+}
+
+.legend-text-labels .lbl-stressed {
+  color: #f87171;
+}
+
+/* Map Corner Controls */
+.map-controls-group {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 10;
+}
+
+.map-ctrl-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(11, 17, 29, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.map-ctrl-btn:hover {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: #22c55e;
+}
+
+/* AI Recommendation Card */
+.ai-recommendation-card {
+  padding: 16px 18px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.rec-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.rec-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.rec-body-content {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.crop-preview-thumb {
+  width: 110px;
+  height: 110px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  flex-shrink: 0;
+}
+
+.rec-text-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.rec-subhead {
+  font-size: 11.5px;
+  color: #94a3b8;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.rec-crop-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.rec-description {
+  font-size: 12px;
+  color: #cbd5e1;
+  line-height: 1.4;
+}
+
+/* Why? Reasons Section */
+.rec-why-container {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+
+.rec-why-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.rec-why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.why-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: #f1f5f9;
+  font-weight: 500;
+}
+
+.why-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.btn-view-plan {
+  width: 100%;
+  padding: 10px 16px;
+  background: #22c55e;
+  color: #052e16;
+  font-weight: 700;
+  font-size: 13.5px;
+  border: none;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+}
+
+.btn-view-plan:hover {
+  background: #4ade80;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.45);
+}
+
+/* --------------------------------------------------------------------------
+   ROW 3: BOTTOM 4 CARDS (WEATHER, WATER USAGE, MARKET, FARM TRENDS)
+   -------------------------------------------------------------------------- */
+.bottom-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.bottom-card {
+  padding: 16px 18px 14px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.bottom-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.bottom-card-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.bottom-card-source {
+  font-size: 10px;
+  color: #64748b;
+  font-weight: normal;
+}
+
+/* Weather Card Details */
+.weather-main-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.weather-sun-icon {
+  font-size: 28px;
+}
+
+.weather-temp-num {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.weather-condition-lbl {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.weather-stats-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #94a3b8;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 8px;
+  margin-bottom: 6px;
+}
+
+/* Water Usage Card Details */
+.water-metric-num {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 2px;
+}
+
+.water-metric-status {
+  font-size: 12px;
+  color: #38bdf8;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.water-savings-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: var(--radius-pill);
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  font-size: 10.5px;
+  color: #4ade80;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+/* Market Insights Card Details */
+.market-table {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.market-table-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 2px 0;
+}
+
+.market-crop-name {
+  font-weight: 600;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.market-price-val {
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.market-info-note {
+  font-size: 10.5px;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.08);
+  border-radius: 6px;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Farm Trends Card Details */
+.trends-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+.trend-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #94a3b8;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.trend-chart-canvas-wrap {
+  width: 100%;
+  height: 72px;
+  position: relative;
+}
+
+/* ==========================================================================
+   FARM SHIFT V2 - ADVANCED VIEWS (ANALYTICS, ADVISOR, MAP, SETTINGS, MARKET)
+   ========================================================================== */
+
+.app-section-view {
+  width: 100%;
+  animation: fadeInView 0.25s ease-out;
+}
+
+@keyframes fadeInView {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.view-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.view-header-title-group h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.view-header-subtitle {
+  font-size: 12.5px;
+  color: #94a3b8;
+  margin-top: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   V2 ANALYTICS STYLES
+   -------------------------------------------------------------------------- */
+.analytics-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+  background: rgba(15, 23, 42, 0.6);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.analytics-period-group, .indicator-tabs-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.analytics-period-btn, .indicator-tab-btn {
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.analytics-period-btn:hover, .indicator-tab-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.analytics-period-btn.active, .indicator-tab-btn.active {
+  background: #22c55e;
+  color: #052e16;
+  font-weight: 700;
+  border-color: #22c55e;
+}
+
+.analytics-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.analytics-stat-card {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat-card-label {
+  font-size: 11.5px;
+  color: #94a3b8;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-card-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.stat-card-subtext {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.analytics-main-chart-card {
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.chart-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.chart-legend-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 11.5px;
+}
+
+.analytics-obs-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.analytics-obs-card {
+  padding: 18px;
+}
+
+.analytics-obs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.analytics-obs-item {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.analytics-obs-item.positive { border-left: 3px solid #22c55e; }
+.analytics-obs-item.info { border-left: 3px solid #38bdf8; }
+.analytics-obs-item.warning { border-left: 3px solid #f97316; }
+
+.obs-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.obs-date { font-size: 11px; color: #94a3b8; }
+.obs-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+.badge-positive { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+.badge-info { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+.badge-warning { background: rgba(249, 115, 22, 0.15); color: #f97316; }
+
+.obs-indicator { font-weight: 700; font-size: 13px; color: #ffffff; }
+.obs-comment { font-size: 11.5px; color: #cbd5e1; line-height: 1.4; }
+
+.analytics-disclaimer-box {
+  background: rgba(56, 189, 248, 0.05);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 11.5px;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   V2 CROP ADVISOR STYLES
+   -------------------------------------------------------------------------- */
+.advisor-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  background: rgba(15, 23, 42, 0.7);
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.advisor-filter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.advisor-select {
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  color: #ffffff;
+  font-size: 12.5px;
+  outline: none;
+}
+
+.advisor-recs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.advisor-rec-card {
+  padding: 22px;
+  border-radius: 16px;
+  border: 1px solid var(--border-subtle);
+  position: relative;
+}
+
+.advisor-rec-card.primary-highlight {
+  border-color: rgba(34, 197, 94, 0.45);
+  box-shadow: 0 0 25px rgba(34, 197, 94, 0.15);
+}
+
+.advisor-card-top {
+  margin-bottom: 16px;
+}
+
+.advisor-crop-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.advisor-badge-category {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #38bdf8;
+  letter-spacing: 0.5px;
+}
+
+.advisor-crop-heading {
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-top: 2px;
+}
+
+.advisor-crop-variety {
+  font-size: 12.5px;
+  color: #94a3b8;
+}
+
+.advisor-score-box {
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  border-radius: 12px;
+  padding: 8px 16px;
+  text-align: center;
+}
+
+.advisor-score-num {
+  display: block;
+  font-size: 22px;
+  font-weight: 900;
+  color: #4ade80;
+  line-height: 1;
+}
+
+.advisor-score-label {
+  font-size: 10px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.advisor-breakdown-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.advisor-breakdown-item {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.advisor-breakdown-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.breakdown-lbl {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.breakdown-val {
+  font-size: 12px;
+  color: #e2e8f0;
+  line-height: 1.45;
+}
+
+.limitation-box {
+  background: rgba(239, 68, 68, 0.06);
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+.reasoning-box {
+  background: rgba(56, 189, 248, 0.06);
+  border-color: rgba(56, 189, 248, 0.25);
+}
+
+.uncertainty-box {
+  background: rgba(250, 204, 21, 0.06);
+  border-color: rgba(250, 204, 21, 0.25);
+}
+
+.advisor-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 14px;
+}
+
+/* --------------------------------------------------------------------------
+   V2 MAP VIEW STYLES
+   -------------------------------------------------------------------------- */
+.gis-map-card {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.gis-map-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.map-layer-pills {
+  display: flex;
+  gap: 6px;
+}
+
+.map-layer-btn {
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.map-layer-btn.active {
+  background: #22c55e;
+  color: #052e16;
+  font-weight: 700;
+  border-color: #22c55e;
+}
+
+.gis-map-container-wrap {
+  width: 100%;
+  height: 540px;
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #04080e;
+}
+
+#gis-map-view-container {
+  width: 100%;
+  height: 100%;
+}
+
+.gis-floating-telemetry {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 1000;
+  background: rgba(11, 17, 29, 0.92);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+}
+
+.gis-telemetry-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.gis-telemetry-item strong {
+  color: #4ade80;
+}
+
+.gis-area-badges {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.area-badge-chip {
+  padding: 3px 8px;
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #4ade80;
+}
+
+/* --------------------------------------------------------------------------
+   V2 SETTINGS STYLES
+   -------------------------------------------------------------------------- */
+.settings-grid-layout {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 18px;
+}
+
+.settings-card {
+  padding: 22px;
+}
+
+.settings-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* --------------------------------------------------------------------------
+   V2 MARKET TRENDS (COMING SOON) STYLES
+   -------------------------------------------------------------------------- */
+.market-coming-soon-card {
+  padding: 40px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 480px;
+}
+
+.market-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: var(--radius-pill);
+  background: rgba(250, 204, 21, 0.12);
+  border: 1px solid rgba(250, 204, 21, 0.4);
+  color: #facc15;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.market-cs-title {
+  font-size: 28px;
+  font-weight: 900;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.market-cs-desc {
+  max-width: 580px;
+  font-size: 14px;
+  color: #94a3b8;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+.market-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 760px;
+  width: 100%;
+}
+
+.market-preview-box {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 18px;
+  text-align: left;
+}
+
+.market-preview-box h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.market-preview-box p {
+  font-size: 11.5px;
+  color: #94a3b8;
+  line-height: 1.45;
+}
+
+
