@@ -21,7 +21,7 @@ const FarmApp = {
     FarmRegistration.init();
     this.setupViewRouter();
     this.setupEventListeners();
-    this.setupViewportSwitcher();
+    this.setupMobileNav();
     this.setupModals();
 
     // Check if farm is registered and sync live weather
@@ -83,6 +83,14 @@ const FarmApp = {
     if (viewName === 'methods') viewName = 'improvements';
 
     this.currentView = viewName;
+
+    // Close mobile drawer if open
+    const sidebar = document.getElementById('app-sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    if (sidebar && sidebar.classList.contains('open')) {
+      sidebar.classList.remove('open');
+      backdrop?.classList.remove('open');
+    }
 
     // Update desktop sidebar links
     document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
@@ -342,30 +350,41 @@ const FarmApp = {
   },
 
   setupViewportSwitcher: function() {
-    const btnAuto = document.getElementById('switch-auto');
-    const btnDesk = document.getElementById('switch-desktop');
-    const btnMob = document.getElementById('switch-mobile');
-    const buttons = [btnAuto, btnDesk, btnMob];
+    // Retired - application is now natively unified and responsive across all viewports
+  },
 
-    const setMode = (mode) => {
-      this.currentMode = mode;
-      buttons.forEach(b => b?.classList.remove('active'));
-      document.body.classList.remove('force-desktop-view', 'force-mobile-view');
+  setupMobileNav: function() {
+    const toggleBtn = document.getElementById('mobile-menu-toggle');
+    const sidebar = document.getElementById('app-sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    if (!toggleBtn || !sidebar) return;
 
-      if (mode === 'desktop') {
-        btnDesk?.classList.add('active');
-        document.body.classList.add('force-desktop-view');
-      } else if (mode === 'mobile') {
-        btnMob?.classList.add('active');
-        document.body.classList.add('force-mobile-view');
+    const toggle = (forceState) => {
+      const isOpen = forceState !== undefined ? forceState : !sidebar.classList.contains('open');
+      if (isOpen) {
+        sidebar.classList.add('open');
+        backdrop?.classList.add('open');
       } else {
-        btnAuto?.classList.add('active');
+        sidebar.classList.remove('open');
+        backdrop?.classList.remove('open');
       }
     };
 
-    if (btnAuto) btnAuto.addEventListener('click', () => setMode('auto'));
-    if (btnDesk) btnDesk.addEventListener('click', () => setMode('desktop'));
-    if (btnMob) btnMob.addEventListener('click', () => setMode('mobile'));
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggle();
+    });
+
+    if (backdrop) {
+      backdrop.addEventListener('click', () => toggle(false));
+    }
+
+    // Close drawer when any nav link is tapped on mobile
+    sidebar.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth < 1024) toggle(false);
+      });
+    });
   },
 
   setupModals: function() {

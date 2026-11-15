@@ -735,41 +735,17 @@
 }
 
 /* --------------------------------------------------------------------------
-   RESPONSIVE MEDIA QUERIES
-   Intelligently switch between Desktop and Mobile layout
+   RESPONSIVE MEDIA QUERIES (Unified responsive application layout)
    -------------------------------------------------------------------------- */
-@media (min-width: 1024px) {
-  /* On Desktop Screens, show desktop view and hide mobile view by default */
-  body:not(.force-mobile-view) .desktop-app-wrapper {
-    display: flex !important;
-  }
-  body:not(.force-mobile-view) .mobile-app-wrapper {
-    display: none !important;
-  }
-}
-
-@media (max-width: 1023px) {
-  /* On Mobile & Tablet Screens, show mobile view and hide desktop view by default */
-  body:not(.force-desktop-view) .desktop-app-wrapper {
-    display: none !important;
-  }
-  body:not(.force-desktop-view) .mobile-app-wrapper {
-    display: flex !important;
-  }
-}
-
-/* Override classes for user testing toggle */
-body.force-desktop-view .desktop-app-wrapper {
+body .desktop-app-wrapper {
   display: flex !important;
 }
-body.force-desktop-view .mobile-app-wrapper {
+
+body .mobile-app-wrapper {
   display: none !important;
 }
 
-body.force-mobile-view .desktop-app-wrapper {
+.viewport-switch-bar {
   display: none !important;
-}
-body.force-mobile-view .mobile-app-wrapper {
-  display: flex !important;
 }
 
