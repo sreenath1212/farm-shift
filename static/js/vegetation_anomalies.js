@@ -48,6 +48,16 @@ const FarmVegetationAnomaliesV3 = {
         </div>
       </div>
 
+      <!-- NDVI Satellite Surface Preview Card -->
+      <div class="card-glass overflow-hidden" style="padding: 0; margin-bottom: 24px; border: 1px solid rgba(56, 189, 248, 0.2);">
+        <div style="position: relative; height: 180px; background: url('/static/images/ndvi_sample.png') center/cover no-repeat;">
+          <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 16px 20px; background: linear-gradient(to top, rgba(7, 17, 14, 0.95), transparent);">
+            <span class="badge badge-primary mb-1">MODIS / Landsat 250m Composite</span>
+            <h4 class="text-white font-weight-bold mb-0" style="font-size: 16px;">Calibrated Multispectral NDVI Vegetation Surface Reflectance</h4>
+          </div>
+        </div>
+      </div>
+
       <!-- Multi-Month Anomaly Progression Table -->
       <div class="card-glass" style="padding: 20px; margin-bottom: 24px;">
         <h3 style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 12px;">📈 Multi-Temporal NDVI Comparison</h3>

@@ -37,9 +37,9 @@ const FarmPredictionHubV3 = {
 
   render: function(container, farm, yieldData, stressData, weatherData) {
     container.innerHTML = `
-      <!-- Hero Synthesis Banner -->
-      <div class="card-glass" style="padding: 24px; margin-bottom: 24px; border-left: 4px solid #38bdf8;">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <!-- Hero Synthesis Banner with Agricultural Aerial Overlay -->
+      <div class="card-glass overflow-hidden" style="position: relative; padding: 28px 24px; margin-bottom: 24px; border-left: 4px solid #38bdf8; background: linear-gradient(135deg, rgba(7, 17, 14, 0.92) 0%, rgba(15, 23, 42, 0.88) 100%), url('/static/images/hero_paddy.jpg') center/cover no-repeat;">
+        <div style="position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
           <div>
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
               <span style="font-size: 20px;">🔮</span>

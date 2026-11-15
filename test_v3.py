@@ -98,7 +98,12 @@ class FarmShiftV3Tests(unittest.TestCase):
             '/static/js/field_shift_optimizer.js',
             '/static/js/climate_scenario_simulator.js',
             '/static/js/nasa_submission_hub.js',
-            '/static/js/app.js'
+            '/static/js/app.js',
+            '/static/css/v3_enhancements.css',
+            '/static/images/hero_paddy.jpg',
+            '/static/images/earth_glow.png',
+            '/static/images/nasa_logo.png',
+            '/static/images/ndvi_sample.png'
         ]
         for s in scripts:
             r = self.client.get(s)

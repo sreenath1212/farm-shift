@@ -47,7 +47,7 @@ const FieldShiftOptimizer = {
         const crop = this.activeFarm.current_crop || 'Paddy';
         const acres = this.activeFarm.area || 2.5;
 
-        container.innerHTML = `<div class="fs-loading"><i class="fas fa-satellite-dish fa-spin"></i> Fetching live NASA POWER solar irradiance & FAO-56 Penman-Monteith ET₀...</div>`;
+        container.innerHTML = `<div class="p-3 text-muted"><span class="live-beacon"></span> Fetching live NASA POWER solar irradiance & FAO-56 Penman-Monteith ET₀...</div>`;
 
         try {
             const res = await fetch(`/api/fieldshift/water-balance?lat=${lat}&lon=${lon}&crop=${encodeURIComponent(crop)}&acres=${acres}`);
@@ -55,10 +55,10 @@ const FieldShiftOptimizer = {
             if (data.status === 'success') {
                 this.renderWaterBalance(data);
             } else {
-                container.innerHTML = `<div class="alert alert-warning">NASA POWER telemetry temporarily cached.</div>`;
+                container.innerHTML = `<div class="badge badge-warning p-2">NASA POWER telemetry temporarily cached.</div>`;
             }
         } catch (e) {
-            container.innerHTML = `<div class="alert alert-danger">Error retrieving NASA water balance telemetry.</div>`;
+            container.innerHTML = `<div class="badge badge-danger p-2">Error retrieving NASA water balance telemetry.</div>`;
         }
     },
 
@@ -72,10 +72,12 @@ const FieldShiftOptimizer = {
         const topAlt = alts[0] || {};
 
         container.innerHTML = `
-            <div class="card p-3 mb-4 shadow-sm border-left-primary" style="border-left: 4px solid #2e7d32; background: #f8faf8;">
-                <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap">
+            <div class="card p-4 mb-4 border-left-success">
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
                     <div>
-                        <h5 class="mb-0 text-success"><i class="fas fa-tint"></i> FAO-56 Crop Water Balance & NASA Telemetry</h5>
+                        <h4 class="mb-1 text-white font-weight-bold">
+                            💧 FAO-56 Crop Water Balance & NASA Telemetry
+                        </h4>
                         <small class="text-muted">Calculated via live NASA POWER Solar Radiation (${tel.solar_radiation_mj_m2} MJ/m²/day) & Mean Temp (${tel.temperature_mean_c}°C)</small>
                     </div>
                     <span class="badge badge-success px-3 py-2" style="font-size: 0.95rem;">
@@ -83,32 +85,35 @@ const FieldShiftOptimizer = {
                     </span>
                 </div>
                 
-                <div class="row mt-3">
-                    <div class="col-md-4 mb-2">
-                        <div class="p-3 bg-white rounded border">
-                            <small class="text-muted text-uppercase d-block font-weight-bold">Current Baseline: ${cur.crop_name}</small>
-                            <h4 class="text-dark mb-1">${cur.etc_daily_mm} <small class="text-muted" style="font-size:0.9rem">mm/day</small></h4>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="p-3 rounded border h-100" style="background: rgba(255, 255, 255, 0.03);">
+                            <div class="d-flex align-items-center mb-2">
+                                <img src="/static/images/rice_crop.jpg" alt="Crop" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover; margin-right: 8px;">
+                                <small class="text-muted text-uppercase font-weight-bold">Current Baseline: ${cur.crop_name}</small>
+                            </div>
+                            <h3 class="text-white mb-1 font-weight-bold">${cur.etc_daily_mm} <small class="text-muted" style="font-size:0.85rem">mm/day</small></h3>
                             <p class="mb-0 text-muted" style="font-size: 0.85rem;">
-                                Seasonal Demand: <strong>${cur.season_water_mm} mm</strong> (${cur.total_season_m3.toLocaleString()} m³ for ${this.activeFarm.area} acres)
+                                Seasonal Demand: <strong class="text-light">${cur.season_water_mm} mm</strong> (${cur.total_season_m3.toLocaleString()} m³ for ${this.activeFarm.area} acres)
                             </p>
                             <span class="badge badge-secondary mt-2">Crop Coeff Kc: ${cur.kc}</span>
                         </div>
                     </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="p-3 bg-white rounded border border-success">
-                            <small class="text-success text-uppercase d-block font-weight-bold">Top Resilient Shift: ${topAlt.crop_name}</small>
-                            <h4 class="text-success mb-1">${topAlt.etc_daily_mm} <small class="text-muted" style="font-size:0.9rem">mm/day</small></h4>
+                    <div class="col-md-4 mb-3">
+                        <div class="p-3 rounded border border-success h-100" style="background: rgba(34, 197, 94, 0.05);">
+                            <small class="text-success text-uppercase d-block font-weight-bold mb-2">🌱 Top Resilient Shift: ${topAlt.crop_name}</small>
+                            <h3 class="text-success mb-1 font-weight-bold">${topAlt.etc_daily_mm} <small class="text-muted" style="font-size:0.85rem">mm/day</small></h3>
                             <p class="mb-0 text-muted" style="font-size: 0.85rem;">
-                                Seasonal Demand: <strong>${topAlt.season_water_mm} mm</strong> (${topAlt.percent_water_saved}% water reduction)
+                                Seasonal Demand: <strong class="text-light">${topAlt.season_water_mm} mm</strong> (${topAlt.percent_water_saved}% water reduction)
                             </p>
                             <span class="badge badge-success mt-2">Saves ${Number(topAlt.water_savings_liters).toLocaleString()} Liters</span>
                         </div>
                     </div>
-                    <div class="col-md-4 mb-2">
-                        <div class="p-3 bg-white rounded border">
-                            <small class="text-muted text-uppercase d-block font-weight-bold">NASA Soil & Canopy Telemetry</small>
+                    <div class="col-md-4 mb-3">
+                        <div class="p-3 rounded border h-100" style="background: rgba(255, 255, 255, 0.03);">
+                            <small class="text-muted text-uppercase d-block font-weight-bold mb-2">🛰️ NASA Soil & Canopy Telemetry</small>
                             <div id="fs-smap-badge" style="font-size: 0.85rem; line-height: 1.6;">
-                                <i class="fas fa-spinner fa-spin"></i> Reading NASA SMAP & ECOSTRESS...
+                                <span class="live-beacon"></span> Reading NASA SMAP & ECOSTRESS...
                             </div>
                         </div>
                     </div>
@@ -134,7 +139,7 @@ const FieldShiftOptimizer = {
                 badge.innerHTML = `
                     <div><strong>SMAP Root-Zone (0-100cm):</strong> <span class="text-${sm.status === 'Adequate' ? 'success' : 'warning'} font-weight-bold">${sm.root_zone_sm_0_100cm_m3_m3} m³/m³ (${sm.status})</span></div>
                     <div><strong>ECOSTRESS Plant Stress (ESI):</strong> <span class="font-weight-bold text-${eco.evaporative_stress_index > 0.5 ? 'success' : 'danger'}">${eco.evaporative_stress_index}</span> - ${eco.canopy_transpiration_status}</div>
-                    <small class="text-muted">Land Surface Temp (LST): ${eco.land_surface_temp_c}°C</small>
+                    <small class="text-muted">Land Surface Temp (LST): <strong class="text-light">${eco.land_surface_temp_c}°C</strong></small>
                 `;
             }
         } catch (e) {
@@ -160,7 +165,7 @@ const FieldShiftOptimizer = {
         const container = document.getElementById('fs-timeline-container');
         if (!container) return;
 
-        container.innerHTML = `<div class="text-center py-5"><i class="fas fa-sync fa-spin fa-2x text-success"></i><p class="mt-2 text-muted">Calculating adaptive multi-season crop trajectory for '${this.currentPriority}' priority...</p></div>`;
+        container.innerHTML = `<div class="text-center py-5 text-muted"><span class="live-beacon"></span> Calculating adaptive multi-season crop trajectory for '${this.currentPriority}' priority...</div>`;
 
         try {
             const res = await fetch('/api/fieldshift/optimize', {
@@ -178,7 +183,7 @@ const FieldShiftOptimizer = {
                 this.renderOptimizationPlan(data.plan);
             }
         } catch (e) {
-            container.innerHTML = `<div class="alert alert-danger">Error formulating Field Shift optimization plan.</div>`;
+            container.innerHTML = `<div class="badge badge-danger p-2">Error formulating Field Shift optimization plan.</div>`;
         }
     },
 
@@ -191,26 +196,26 @@ const FieldShiftOptimizer = {
 
         plan.timeline.forEach((step, idx) => {
             const badgeClass = idx === 0 ? 'badge-primary' : (idx === 1 ? 'badge-warning' : 'badge-success');
-            const icon = idx === 0 ? 'fa-seedling' : (idx === 1 ? 'fa-exchange-alt' : 'fa-leaf');
+            const icon = idx === 0 ? '🌱' : (idx === 1 ? '🔄' : '🌿');
 
             timelineHtml += `
                 <div class="col-lg-4 mb-4">
-                    <div class="card h-100 shadow-sm border-top-${idx === 0 ? 'primary' : (idx === 1 ? 'warning' : 'success')}" style="border-top: 4px solid ${idx === 0 ? '#1976d2' : (idx === 1 ? '#f57c00' : '#388e3c')};">
+                    <div class="card h-100 border-top-${idx === 0 ? 'primary' : (idx === 1 ? 'warning' : 'success')}">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span class="badge ${badgeClass} text-uppercase px-2 py-1">${step.stage}</span>
-                                <i class="fas ${icon} text-muted fa-lg"></i>
+                                <span style="font-size: 1.2rem;">${icon}</span>
                             </div>
                             <h6 class="text-muted mb-1" style="font-size: 0.85rem;">${step.season}</h6>
-                            <h4 class="card-title text-dark font-weight-bold mb-3">${step.crop_name}</h4>
+                            <h4 class="text-white font-weight-bold mb-3">${step.crop_name}</h4>
                             
-                            <ul class="list-unstyled mb-3" style="font-size: 0.9rem;">
-                                <li class="mb-1"><i class="fas fa-tint text-primary mr-2"></i> Water Demand: <strong>${step.water_need_mm} mm</strong></li>
-                                <li class="mb-1"><i class="fas fa-seedling text-success mr-2"></i> Soil Nitrogen Impact: <strong>${step.soil_nitrogen_impact}</strong></li>
+                            <ul class="list-unstyled mb-3" style="font-size: 0.9rem; line-height: 1.8;">
+                                <li class="text-muted">💧 Water Demand: <strong class="text-primary">${step.water_need_mm} mm</strong></li>
+                                <li class="text-muted">🌱 Soil Nitrogen: <strong class="text-success">${step.soil_nitrogen_impact}</strong></li>
                             </ul>
                             
-                            <div class="p-2 bg-light rounded text-muted" style="font-size: 0.85rem; border-left: 3px solid #ccc;">
-                                <strong>Strategic Action:</strong> ${step.action}
+                            <div class="p-2 rounded text-light" style="background: rgba(255, 255, 255, 0.04); font-size: 0.84rem; border-left: 3px solid rgba(255,255,255,0.2);">
+                                <strong>Action:</strong> ${step.action}
                             </div>
                         </div>
                     </div>
@@ -219,36 +224,36 @@ const FieldShiftOptimizer = {
         });
 
         container.innerHTML = `
-            <div class="card mb-4 border-0 shadow-sm">
-                <div class="card-body bg-light rounded">
+            <div class="card mb-4 border-0">
+                <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-md-8">
-                            <h5 class="font-weight-bold text-dark mb-1">${plan.plan_title}</h5>
+                            <h4 class="font-weight-bold text-white mb-1">${plan.plan_title}</h4>
                             <p class="text-muted mb-0" style="font-size: 0.95rem;">${plan.description}</p>
                         </div>
                         <div class="col-md-4 text-md-right mt-3 mt-md-0">
-                            <span class="badge badge-dark p-2" style="font-size: 0.9rem;">Resilience: ${m.climate_resilience_rating}</span>
+                            <span class="badge badge-success p-2" style="font-size: 0.9rem;">Resilience: ${m.climate_resilience_rating}</span>
                         </div>
                     </div>
                     
-                    <hr>
+                    <hr style="border-color: rgba(255, 255, 255, 0.08); margin: 18px 0;">
 
-                    <div class="row text-center mt-3">
+                    <div class="row text-center">
                         <div class="col-6 col-md-3 mb-2">
-                            <span class="text-muted d-block small text-uppercase">Water Saved</span>
-                            <h4 class="text-primary font-weight-bold mb-0">${Number(m.total_water_saved_liters).toLocaleString()} <small style="font-size: 0.65em">Liters</small></h4>
+                            <span class="text-muted d-block small text-uppercase font-weight-bold">Water Saved</span>
+                            <h3 class="text-primary font-weight-bold mb-0">${Number(m.total_water_saved_liters).toLocaleString()} <small style="font-size: 0.65em">Liters</small></h3>
                         </div>
                         <div class="col-6 col-md-3 mb-2">
-                            <span class="text-muted d-block small text-uppercase">Net Bio-Nitrogen</span>
-                            <h4 class="text-success font-weight-bold mb-0">${m.net_nitrogen_balance_kg_ha > 0 ? '+' : ''}${m.net_nitrogen_balance_kg_ha} <small style="font-size: 0.65em">kg N/ha</small></h4>
+                            <span class="text-muted d-block small text-uppercase font-weight-bold">Net Bio-Nitrogen</span>
+                            <h3 class="text-success font-weight-bold mb-0">${m.net_nitrogen_balance_kg_ha > 0 ? '+' : ''}${m.net_nitrogen_balance_kg_ha} <small style="font-size: 0.65em">kg N/ha</small></h3>
                         </div>
                         <div class="col-6 col-md-3 mb-2">
-                            <span class="text-muted d-block small text-uppercase">Pest Cycle Disruption</span>
-                            <h4 class="text-info font-weight-bold mb-0">${m.pest_cycle_disruption}</h4>
+                            <span class="text-muted d-block small text-uppercase font-weight-bold">Pest Cycle Disruption</span>
+                            <h3 class="text-info font-weight-bold mb-0">${m.pest_cycle_disruption}</h3>
                         </div>
                         <div class="col-6 col-md-3 mb-2">
-                            <span class="text-muted d-block small text-uppercase">Groundwater Protection</span>
-                            <h4 class="text-success font-weight-bold mb-0">High (<i class="fas fa-shield-alt"></i>)</h4>
+                            <span class="text-muted d-block small text-uppercase font-weight-bold">Aquifer Protection</span>
+                            <h3 class="text-success font-weight-bold mb-0">High (🛡️)</h3>
                         </div>
                     </div>
                 </div>
@@ -259,7 +264,7 @@ const FieldShiftOptimizer = {
             </div>
 
             <div class="text-right mt-2">
-                <button class="btn btn-success px-4 py-2" onclick="FieldShiftOptimizer.applySchedule()"><i class="fas fa-check-circle mr-1"></i> Apply This Field Shift Schedule to Farm</button>
+                <button class="btn btn-success px-4 py-2" onclick="FieldShiftOptimizer.applySchedule()">✓ Apply This Field Shift Schedule to Farm</button>
             </div>
         `;
     },
@@ -273,19 +278,19 @@ const FieldShiftOptimizer = {
         if (!root) return;
 
         root.innerHTML = `
-            <div class="container-fluid py-4">
+            <div class="py-2">
                 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
                     <div>
-                        <h2 class="font-weight-bold text-dark mb-1">
-                            <i class="fas fa-satellite text-success mr-2"></i>Field Shift: Adaptive Crop Rotation Engine
+                        <h2 class="font-weight-bold text-white mb-1" style="font-size: 1.8rem;">
+                            🛰️ Field Shift: Adaptive Crop Rotation Engine
                         </h2>
                         <p class="text-muted mb-0">
                             NASA Space Apps Global Hero Feature — Multi-season adaptation fusing NASA POWER solar radiation, SMAP root-zone moisture, and FAO-56 Penman-Monteith crop water science.
                         </p>
                     </div>
                     <div class="mt-2 mt-md-0">
-                        <button class="btn btn-outline-info mr-2" onclick="App.showView('climate-scenario-simulator')"><i class="fas fa-sliders-h mr-1"></i> Scenario Stress-Test</button>
-                        <button class="btn btn-primary" onclick="App.showView('nasa-submission-hub')"><i class="fas fa-rocket mr-1"></i> NASA Challenge Hub</button>
+                        <button class="btn btn-outline-info mr-2" onclick="App.showView('climate-scenario-simulator')">⚙️ Scenario Stress-Test</button>
+                        <button class="btn btn-primary" onclick="App.showView('nasa-submission-hub')">🚀 NASA Challenge Hub</button>
                     </div>
                 </div>
 
@@ -293,23 +298,23 @@ const FieldShiftOptimizer = {
                 <div id="fs-water-balance-panel"></div>
 
                 <!-- Farmer Priority Selector -->
-                <div class="card mb-4 shadow-sm border-0">
+                <div class="card mb-4 border-0">
                     <div class="card-body">
                         <h6 class="text-uppercase text-muted font-weight-bold mb-3" style="font-size: 0.8rem; letter-spacing: 0.5px;">
-                            <i class="fas fa-crosshairs mr-1"></i> Step 1: Select Strategic Farm Adaptation Priority
+                            🎯 Step 1: Select Strategic Farm Adaptation Priority
                         </h6>
                         <div class="d-flex flex-wrap gap-2">
                             <button class="btn btn-success fs-priority-btn active mr-2 mb-2 px-3 py-2" data-priority="water" onclick="FieldShiftOptimizer.setPriority('water')">
-                                <i class="fas fa-tint mr-1"></i> 💧 Max Water Conservation
+                                💧 Max Water Conservation
                             </button>
                             <button class="btn btn-outline-success fs-priority-btn mr-2 mb-2 px-3 py-2" data-priority="soil" onclick="FieldShiftOptimizer.setPriority('soil')">
-                                <i class="fas fa-seedling mr-1"></i> 🌱 Soil Regeneration & Bio-Nitrogen
+                                🌱 Soil Regeneration & Bio-Nitrogen
                             </button>
                             <button class="btn btn-outline-success fs-priority-btn mr-2 mb-2 px-3 py-2" data-priority="climate" onclick="FieldShiftOptimizer.setPriority('climate')">
-                                <i class="fas fa-shield-alt mr-1"></i> 🛡️ Extreme Climate & Drought Defense
+                                🛡️ Extreme Climate & Drought Defense
                             </button>
                             <button class="btn btn-outline-success fs-priority-btn mb-2 px-3 py-2" data-priority="profit" onclick="FieldShiftOptimizer.setPriority('profit')">
-                                <i class="fas fa-coins mr-1"></i> 💰 High Economic Value & Liquidity
+                                💰 High Economic Value & Liquidity
                             </button>
                         </div>
                     </div>
@@ -323,4 +328,3 @@ const FieldShiftOptimizer = {
 };
 
 window.FieldShiftOptimizer = FieldShiftOptimizer;
-
