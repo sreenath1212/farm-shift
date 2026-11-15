@@ -95,7 +95,22 @@
             <span>Overview</span>
           </a>
 
-          <!-- 2. Farm Management -->
+          <!-- 2. NASA Space Apps Challenge 2026 Special -->
+          <div class="nav-group-label" style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #fbbf24; font-weight: 800; padding: 12px 14px 4px;">NASA Space Apps 2026</div>
+          <a class="nav-link" data-tab="field-shift-optimizer" style="background: rgba(251, 191, 36, 0.08); border-left: 3px solid #fbbf24;">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+            <span style="font-weight: 700; color: #fbbf24;">Field Shift Optimizer</span>
+          </a>
+          <a class="nav-link" data-tab="climate-scenario-simulator">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+            <span>Climate Stress Test</span>
+          </a>
+          <a class="nav-link" data-tab="nasa-submission-hub">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>
+            <span>NASA Challenge Hub</span>
+          </a>
+
+          <!-- 3. Farm Management -->
           <div class="nav-group-label" style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #4ade80; font-weight: 800; padding: 12px 14px 4px;">Farm Management</div>
           <a class="nav-link" data-tab="my-farms">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.2"/></svg>
@@ -238,6 +253,10 @@
           <div class="topbar-right">
             <button class="btn-pill btn-primary-green btn-trigger-add-farm">
               <span>+ Add Farm</span>
+            </button>
+            <button class="btn-pill" style="background: linear-gradient(135deg, #1e3a8a, #0284c7); color: #fff; font-weight: 700; border: none; cursor: pointer; padding: 6px 14px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(2,132,199,0.3);" onclick="FarmApp.showView('nasa-submission-hub')" title="NASA Space Apps 2026 Showcase Hub">
+              <span>🚀</span>
+              <span>NASA Space Apps Hub</span>
             </button>
             <div class="nasa-powered-badge">
               <span>🌿</span>
@@ -1067,6 +1086,27 @@
         <div id="profile-v3-container"></div>
       </div>
 
+      <!-- ===================================================================
+           NASA SPACE APPS 2026: FIELD SHIFT OPTIMIZER (HERO CHALLENGE)
+           =================================================================== -->
+      <div id="view-field-shift-optimizer" class="app-section-view" style="display: none;">
+        <div id="field-shift-optimizer-view"></div>
+      </div>
+
+      <!-- ===================================================================
+           NASA SPACE APPS 2026: CLIMATE SCENARIO STRESS SIMULATOR
+           =================================================================== -->
+      <div id="view-climate-scenario-simulator" class="app-section-view" style="display: none;">
+        <div id="climate-scenario-simulator-view"></div>
+      </div>
+
+      <!-- ===================================================================
+           NASA SPACE APPS 2026: CHALLENGE & JUDGE SHOWCASE HUB
+           =================================================================== -->
+      <div id="view-nasa-submission-hub" class="app-section-view" style="display: none;">
+        <div id="nasa-submission-hub-view"></div>
+      </div>
+
 </main>
   </div>
 
@@ -1573,6 +1613,9 @@
   <script src="/static/js/extreme_weather.js"></script>
   <script src="/static/js/environmental_monitoring.js"></script>
   <script src="/static/js/profile.js"></script>
+  <script src="/static/js/field_shift_optimizer.js"></script>
+  <script src="/static/js/climate_scenario_simulator.js"></script>
+  <script src="/static/js/nasa_submission_hub.js"></script>
   <script src="/static/js/app.js"></script>
 </body>
 </html>

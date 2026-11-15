@@ -157,6 +157,12 @@ const FarmApp = {
       FarmSettings.init(this.getActiveFarmLegacyState());
     } else if (viewName === 'profile') {
       if (typeof FarmProfileV3 !== 'undefined') FarmProfileV3.init();
+    } else if (viewName === 'field-shift-optimizer') {
+      if (typeof FieldShiftOptimizer !== 'undefined') FieldShiftOptimizer.init();
+    } else if (viewName === 'climate-scenario-simulator') {
+      if (typeof ClimateScenarioSimulator !== 'undefined') ClimateScenarioSimulator.init();
+    } else if (viewName === 'nasa-submission-hub') {
+      if (typeof NASASubmissionHub !== 'undefined') NASASubmissionHub.init();
     }
   },
 
@@ -423,6 +429,9 @@ const FarmApp = {
     }, 3400);
   }
 };
+
+window.FarmApp = FarmApp;
+window.App = FarmApp;
 
 document.addEventListener('DOMContentLoaded', () => {
   FarmApp.init();

@@ -123,3 +123,4 @@ const FarmPredictionHubV3 = {
     `;
   }
 };
+

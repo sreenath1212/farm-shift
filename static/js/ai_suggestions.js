@@ -111,3 +111,4 @@ const FarmAISuggestions = {
     }
   }
 };
+
