@@ -24,22 +24,25 @@ const FieldShiftOptimizer = {
                 if (stored) farm = JSON.parse(stored);
             } catch (e) {}
         }
-        this.activeFarm = farm || {
-            id: 'demo_farm',
-            name: 'Green Valley Field',
-            location: 'Erakkulam, Kerala',
-            lat: 10.78,
-            lng: 76.65,
-            area: 2.5,
-            current_crop: 'Paddy',
-            soil_type: 'Clay Loam',
-            irrigation: 'Canal Irrigation'
+        const acreage = Number(farm?.acreage || farm?.area || 2.5) || 2.5;
+        this.activeFarm = {
+            id: farm?.id || 'demo_farm',
+            name: farm?.name || 'Green Valley Field',
+            location: farm?.location || 'Erakkulam, Kerala',
+            lat: Number(farm?.coordinates?.lat || farm?.lat || 10.78) || 10.78,
+            lng: Number(farm?.coordinates?.lng || farm?.lng || 76.65) || 76.65,
+            area: acreage,
+            acreage: acreage,
+            current_crop: farm?.current_crop || farm?.crop || 'Short-Duration Rice',
+            soil_type: farm?.soil_type || 'Alluvial Clay Loam',
+            irrigation: farm?.irrigation_mode || farm?.irrigation || 'Canal Irrigation'
         };
         this.fetchWaterBalance();
         this.fetchOptimizationPlan();
     },
 
     getCalibratedWaterBalance(lat, lon, crop, acres) {
+        const farmAcres = Number(acres) || 2.5;
         return {
             status: "success",
             is_fallback: true,
@@ -56,7 +59,7 @@ const FieldShiftOptimizer = {
                 kc: 1.20,
                 etc_daily_mm: 5.26,
                 season_water_mm: 1250,
-                total_season_m3: Math.round(1250 * 10 * (acres || 2.5) * 0.404686),
+                total_season_m3: Math.round(1250 * 10 * farmAcres * 0.404686),
                 n_balance_kg_ha: -80
             },
             field_shift_alternatives: [
@@ -65,7 +68,7 @@ const FieldShiftOptimizer = {
                     season_water_mm: 260,
                     etc_daily_mm: 2.63,
                     percent_water_saved: 79.2,
-                    water_savings_liters: Math.round(990 * 4046.86 * (acres || 2.5)),
+                    water_savings_liters: Math.round(990 * 4046.86 * farmAcres),
                     drought_tolerance: "High"
                 },
                 {
@@ -73,7 +76,7 @@ const FieldShiftOptimizer = {
                     season_water_mm: 320,
                     etc_daily_mm: 3.07,
                     percent_water_saved: 74.4,
-                    water_savings_liters: Math.round(930 * 4046.86 * (acres || 2.5)),
+                    water_savings_liters: Math.round(930 * 4046.86 * farmAcres),
                     drought_tolerance: "Very High"
                 }
             ]
@@ -81,58 +84,83 @@ const FieldShiftOptimizer = {
     },
 
     getCalibratedPlan(priority, currentCrop, acres) {
-        const crop = currentCrop || "Paddy";
+        const crop = currentCrop || "Short-Duration Rice";
         const isWater = priority === 'water';
         const isSoil = priority === 'soil';
         const isClimate = priority === 'climate';
+        const farmAcres = Number(acres) || 2.5;
 
         const shiftCrop = isWater ? "Lentils / Masoor" : (isClimate ? "Pearl Millet / Bajra" : "Chickpea / Green Gram");
         const recoveryCrop = isSoil ? "Green Gram (Mung)" : "Seasonal Vegetables";
+
+        const title = isWater ? "Aquifer Protection & Drought Adaptation Plan" : (isSoil ? "Soil Regeneration & Organic Nitrogen Restoration Plan" : (isClimate ? "Extreme Weather Defense & Heat Resilient Strategy" : "High-Liquidity Balanced Agricultural Production Plan"));
+        const desc = isWater ? "Prioritizes minimal irrigation demand, cutting total farm water consumption by up to 68%." : (isSoil ? "Successive leguminous biological nitrogen fixation restoring natural bio-available nitrogen." : (isClimate ? "Engineered with deep-rooted crops resistant to 40°C+ thermal spikes and erratic rainfall." : "Optimized for maximum cash-flow velocity and regional commodity market demand."));
+
+        const waterSaved = Math.round(970 * 4046.86 * farmAcres);
+        const netN = isSoil ? 65 : (isClimate ? 40 : 48);
 
         return {
             status: "success",
             is_fallback: true,
             plan: {
                 priority: priority,
-                acres: acres || 2.5,
+                plan_title: title,
+                title: title,
+                description: desc,
+                acres: farmAcres,
+                metrics: {
+                    total_water_saved_liters: waterSaved,
+                    cumulative_water_savings_liters: waterSaved,
+                    net_nitrogen_balance_kg_ha: netN,
+                    net_nitrogen_restoration_kg: netN,
+                    pest_cycle_disruption: "High (🛡️)",
+                    climate_resilience_rating: "94% (Elite)",
+                    economic_viability: "High Diversification (+18% ROI)"
+                },
                 timeline: [
                     {
-                        season_name: "Season 1 (Kharif / Monsoon)",
-                        role: `Current Anchor: ${crop}`,
+                        season: "Season 1 (Kharif / Monsoon Baseline)",
+                        season_name: "Season 1 (Kharif / Monsoon Baseline)",
+                        stage: "Current Baseline",
+                        role: "Current Baseline",
+                        crop: crop,
                         crop_name: crop,
                         cycle_days: "120-135 days",
                         water_need_mm: 1250,
+                        soil_nitrogen_impact: "-80 kg/ha",
                         nitrogen_kg: -80,
                         resilience_score: 55,
                         action: "Complete current harvesting cycle and perform minimum-tillage soil preparation."
                     },
                     {
-                        season_name: "Season 2 (Rabi / Winter Adaptive Shift)",
-                        role: `Field Shift Adaptive: ${shiftCrop}`,
+                        season: "Season 2 (Rabi / Adaptive Field Shift)",
+                        season_name: "Season 2 (Rabi / Adaptive Field Shift)",
+                        stage: "Adaptive Transition",
+                        role: "Adaptive Transition",
+                        crop: shiftCrop,
                         crop_name: shiftCrop,
                         cycle_days: "75-90 days",
                         water_need_mm: 280,
-                        nitrogen_kg: +48,
+                        soil_nitrogen_impact: "+48 kg/ha",
+                        nitrogen_kg: 48,
                         resilience_score: 92,
                         action: `Introduce ${shiftCrop} to slash irrigation draft by ~75% and fix atmospheric nitrogen.`
                     },
                     {
-                        season_name: "Season 3 (Summer Regenerative Cycle)",
-                        role: `Regenerative Recovery: ${recoveryCrop}`,
+                        season: "Season 3 (Summer / Soil Regeneration)",
+                        season_name: "Season 3 (Summer / Soil Regeneration)",
+                        stage: "Regenerative Recovery",
+                        role: "Regenerative Recovery",
+                        crop: recoveryCrop,
                         crop_name: recoveryCrop,
                         cycle_days: "60-70 days",
                         water_need_mm: 300,
-                        nitrogen_kg: +35,
+                        soil_nitrogen_impact: "+35 kg/ha",
+                        nitrogen_kg: 35,
                         resilience_score: 88,
-                        action: "Short-duration summer cover crop to break weed cycles and maximize net margin."
+                        action: "Short-duration summer cover crop to break weed-pest cycles and maximize net margin."
                     }
-                ],
-                metrics: {
-                    cumulative_water_savings_liters: Math.round(970 * 4046.86 * (acres || 2.5)),
-                    net_nitrogen_restoration_kg: Math.round(65 * (acres || 2.5)),
-                    climate_resilience_rating: "94% (Elite)",
-                    economic_viability: "High Diversification (+18% ROI)"
-                }
+                ]
             }
         };
     },
@@ -308,33 +336,47 @@ const FieldShiftOptimizer = {
 
     renderOptimizationPlan(plan) {
         const container = document.getElementById('fs-timeline-container');
-        if (!container) return;
+        if (!container || !plan) return;
 
-        const m = plan.metrics;
+        const m = plan.metrics || {};
+        const title = plan.plan_title || plan.title || "Aquifer Protection & Drought Adaptation Plan";
+        const desc = plan.description || plan.desc || "Adaptive multi-season crop trajectory optimized for farm resilience and water conservation.";
+        const resilienceRating = m.climate_resilience_rating || "94% (Elite)";
+        const waterSaved = m.total_water_saved_liters ?? m.cumulative_water_savings_liters ?? 9700000;
+        const netNitrogen = m.net_nitrogen_balance_kg_ha ?? m.net_nitrogen_restoration_kg ?? 48;
+        const pestDisruption = m.pest_cycle_disruption || "High (🛡️)";
+
         let timelineHtml = '';
+        const timeline = plan.timeline || [];
 
-        plan.timeline.forEach((step, idx) => {
+        timeline.forEach((step, idx) => {
             const badgeClass = idx === 0 ? 'badge-primary' : (idx === 1 ? 'badge-warning' : 'badge-success');
             const icon = idx === 0 ? '🌱' : (idx === 1 ? '🔄' : '🌿');
+            const stage = step.stage || step.role || (idx === 0 ? "Current Baseline" : (idx === 1 ? "Adaptive Transition" : "Regenerative Recovery"));
+            const season = step.season || step.season_name || `Season ${idx + 1}`;
+            const cropName = step.crop_name || step.crop || "Adaptive Crop";
+            const waterNeed = step.water_need_mm ?? (idx === 0 ? 1250 : (idx === 1 ? 280 : 300));
+            const nitrogenImpact = step.soil_nitrogen_impact || (step.nitrogen_kg !== undefined ? `${step.nitrogen_kg > 0 ? '+' : ''}${step.nitrogen_kg} kg/ha` : "+48 kg/ha");
+            const action = step.action || "Execute planned seasonal agricultural management.";
 
             timelineHtml += `
                 <div class="col-lg-4 mb-4">
                     <div class="card h-100 border-top-${idx === 0 ? 'primary' : (idx === 1 ? 'warning' : 'success')}">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="badge ${badgeClass} text-uppercase px-2 py-1">${step.stage}</span>
+                                <span class="badge ${badgeClass} text-uppercase px-2 py-1">${stage}</span>
                                 <span style="font-size: 1.2rem;">${icon}</span>
                             </div>
-                            <h6 class="text-muted mb-1" style="font-size: 0.85rem;">${step.season}</h6>
-                            <h4 class="text-white font-weight-bold mb-3">${step.crop_name}</h4>
+                            <h6 class="text-muted mb-1" style="font-size: 0.85rem;">${season}</h6>
+                            <h4 class="text-white font-weight-bold mb-3">${cropName}</h4>
                             
                             <ul class="list-unstyled mb-3" style="font-size: 0.9rem; line-height: 1.8;">
-                                <li class="text-muted">💧 Water Demand: <strong class="text-primary">${step.water_need_mm} mm</strong></li>
-                                <li class="text-muted">🌱 Soil Nitrogen: <strong class="text-success">${step.soil_nitrogen_impact}</strong></li>
+                                <li class="text-muted">💧 Water Demand: <strong class="text-primary">${waterNeed} mm</strong></li>
+                                <li class="text-muted">🌱 Soil Nitrogen: <strong class="text-success">${nitrogenImpact}</strong></li>
                             </ul>
                             
                             <div class="p-2 rounded text-light" style="background: rgba(255, 255, 255, 0.04); font-size: 0.84rem; border-left: 3px solid rgba(255,255,255,0.2);">
-                                <strong>Action:</strong> ${step.action}
+                                <strong>Action:</strong> ${action}
                             </div>
                         </div>
                     </div>
@@ -347,11 +389,11 @@ const FieldShiftOptimizer = {
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-md-8">
-                            <h4 class="font-weight-bold text-white mb-1">${plan.plan_title}</h4>
-                            <p class="text-muted mb-0" style="font-size: 0.95rem;">${plan.description}</p>
+                            <h4 class="font-weight-bold text-white mb-1">${title}</h4>
+                            <p class="text-muted mb-0" style="font-size: 0.95rem;">${desc}</p>
                         </div>
                         <div class="col-md-4 text-md-right mt-3 mt-md-0">
-                            <span class="badge badge-success p-2" style="font-size: 0.9rem;">Resilience: ${m.climate_resilience_rating}</span>
+                            <span class="badge badge-success p-2" style="font-size: 0.9rem;">Resilience: ${resilienceRating}</span>
                         </div>
                     </div>
                     
@@ -360,15 +402,15 @@ const FieldShiftOptimizer = {
                     <div class="row text-center">
                         <div class="col-6 col-md-3 mb-2">
                             <span class="text-muted d-block small text-uppercase font-weight-bold">Water Saved</span>
-                            <h3 class="text-primary font-weight-bold mb-0">${Number(m.total_water_saved_liters).toLocaleString()} <small style="font-size: 0.65em">Liters</small></h3>
+                            <h3 class="text-primary font-weight-bold mb-0">${Number(waterSaved).toLocaleString()} <small style="font-size: 0.65em">Liters</small></h3>
                         </div>
                         <div class="col-6 col-md-3 mb-2">
                             <span class="text-muted d-block small text-uppercase font-weight-bold">Net Bio-Nitrogen</span>
-                            <h3 class="text-success font-weight-bold mb-0">${m.net_nitrogen_balance_kg_ha > 0 ? '+' : ''}${m.net_nitrogen_balance_kg_ha} <small style="font-size: 0.65em">kg N/ha</small></h3>
+                            <h3 class="text-success font-weight-bold mb-0">${Number(netNitrogen) > 0 ? '+' : ''}${netNitrogen} <small style="font-size: 0.65em">kg N/ha</small></h3>
                         </div>
                         <div class="col-6 col-md-3 mb-2">
                             <span class="text-muted d-block small text-uppercase font-weight-bold">Pest Cycle Disruption</span>
-                            <h3 class="text-info font-weight-bold mb-0">${m.pest_cycle_disruption}</h3>
+                            <h3 class="text-info font-weight-bold mb-0">${pestDisruption}</h3>
                         </div>
                         <div class="col-6 col-md-3 mb-2">
                             <span class="text-muted d-block small text-uppercase font-weight-bold">Aquifer Protection</span>
