@@ -39,6 +39,45 @@
       "health_score": 88,
       "created_at": "2026-11-14T06:14:08.580Z",
       "updated_at": "2026-11-14T06:14:08.591501+00:00"
+    },
+    {
+      "id": "farm_1794748167182",
+      "name": "Green Valley Field",
+      "operator_name": "Farm Operator",
+      "location": "Thalassery, Kerala, India",
+      "coordinates": {
+        "lat": 11.75947,
+        "lng": 75.47794
+      },
+      "acreage": 2.5,
+      "land_type": "Wetland / Paddy Field",
+      "soil_type": "Alluvial Clay Loam",
+      "soil_ph": 6.5,
+      "irrigation_mode": "Canal / Bund Controlled",
+      "previous_crops": "Long-Duration Paddy",
+      "current_crop": "Short-Duration Rice",
+      "polygon_coordinates": [
+        [
+          11.76037,
+          75.47684000000001
+        ],
+        [
+          11.760670000000001,
+          75.47884
+        ],
+        [
+          11.75867,
+          75.47914
+        ],
+        [
+          11.758370000000001,
+          75.47724000000001
+        ]
+      ],
+      "health_score": 90,
+      "created_at": "2026-11-15T13:09:27.182Z",
+      "user_id": "guest",
+      "updated_at": "2026-11-15T13:09:27.245536+00:00"
     }
   ],
   "active_farm_id": "farm_1794636848580",
@@ -49,6 +88,20 @@
   },
   "users": [],
   "activity": [
+    {
+      "id": "evt_1794748656196",
+      "type": "farm",
+      "title": "Farm saved",
+      "detail": "V3 Test Agricultural Plot was registered or updated.",
+      "created_at": "2026-11-15T13:17:36.196858+00:00"
+    },
+    {
+      "id": "evt_1794748167246",
+      "type": "farm",
+      "title": "Farm saved",
+      "detail": "Green Valley Field was registered or updated.",
+      "created_at": "2026-11-15T13:09:27.245536+00:00"
+    },
     {
       "id": "evt_1794747377391",
       "type": "farm",

@@ -112,22 +112,44 @@ def current_user_id():
 
 @app.route('/')
 def index():
-    index_file = os.path.join(BASE_DIR, 'index.html')
-    if os.path.exists(index_file):
-        with open(index_file, 'r', encoding='utf-8') as f:
-            return f.read(), 200, {'Content-Type': 'text/html; charset=utf-8'}
+    for candidate in [
+        os.path.join(BASE_DIR, 'index.html'),
+        os.path.join(BASE_DIR, 'templates', 'index.html'),
+        os.path.join(os.path.dirname(BASE_DIR), 'index.html'),
+        'index.html',
+        'templates/index.html'
+    ]:
+        if os.path.exists(candidate):
+            with open(candidate, 'r', encoding='utf-8') as f:
+                return f.read(), 200, {'Content-Type': 'text/html; charset=utf-8'}
     return "Farm Shift V3 - index.html missing", 404
+
+@app.route('/api/index.py')
+@app.route('/api/index')
+def api_index_handler():
+    # If the root request was rewritten to /api/index or /api/index.py, serve the dashboard
+    return index()
 
 @app.route('/<path:filename>')
 def serve_root_files(filename):
+    # NEVER serve Python source code or backend files to the browser
+    if filename.endswith(('.py', '.pyc', '.json', '.env', '.md', '.txt', '.bat', '.sh', '.lock', '.log')):
+        return index()
+
     if filename.endswith('.html'):
         full_path = os.path.join(BASE_DIR, filename)
         if os.path.exists(full_path):
             with open(full_path, 'r', encoding='utf-8') as f:
                 return f.read(), 200, {'Content-Type': 'text/html; charset=utf-8'}
-    if os.path.exists(os.path.join(BASE_DIR, filename)):
-        return send_from_directory(BASE_DIR, filename)
-    return "Not Found", 404
+
+    allowed_exts = ('.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.woff', '.woff2', '.ttf', '.webp')
+    if filename.endswith(allowed_exts):
+        full_path = os.path.join(BASE_DIR, filename)
+        if os.path.exists(full_path):
+            return send_from_directory(BASE_DIR, filename)
+
+    # For any unknown path, return the SPA index.html so client-side routing works
+    return index()
 
 # ─── AUTH ROUTES ──────────────────────────────────────────────────────────────
 
