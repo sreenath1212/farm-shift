@@ -103,7 +103,8 @@ class FarmShiftV3Tests(unittest.TestCase):
             '/static/images/hero_paddy.jpg',
             '/static/images/earth_glow.png',
             '/static/images/nasa_logo.png',
-            '/static/images/ndvi_sample.png'
+            '/static/images/ndvi_sample.png',
+            '/static/images/app_bg_cosmic_fields.jpg'
         ]
         for s in scripts:
             r = self.client.get(s)
