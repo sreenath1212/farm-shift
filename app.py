@@ -117,13 +117,35 @@ class VercelWSGIMiddleware:
         self.wsgi_app = wsgi_app
 
     def __call__(self, environ, start_response):
-        raw_uri = environ.get('HTTP_X_FORWARDED_URI') or environ.get('HTTP_X_MATCHED_PATH') or environ.get('REQUEST_URI')
-        if raw_uri:
-            clean_path = raw_uri.split('?')[0]
-            if clean_path and clean_path not in ('/api/index.py', '/api/index'):
-                environ['PATH_INFO'] = clean_path
-                if '?' in raw_uri and not environ.get('QUERY_STRING'):
-                    environ['QUERY_STRING'] = raw_uri.split('?', 1)[1]
+        # 1. Parse __vercel_path from QUERY_STRING (set by vercel.json rewrite)
+        qs = environ.get('QUERY_STRING', '')
+        if '__vercel_path=' in qs:
+            params = urllib.parse.parse_qs(qs)
+            vpaths = params.pop('__vercel_path', None)
+            if vpaths and vpaths[0]:
+                target_path = vpaths[0]
+                if not target_path.startswith('/'):
+                    target_path = '/' + target_path
+                environ['PATH_INFO'] = target_path
+                environ['QUERY_STRING'] = urllib.parse.urlencode(params, doseq=True)
+
+        # 2. Check proxy headers if PATH_INFO is still pointing to the serverless entrypoint
+        curr_path = environ.get('PATH_INFO', '')
+        if curr_path in ('/api/index.py', '/api/index', '/api'):
+            raw_uri = (
+                environ.get('HTTP_X_FORWARDED_URI') or
+                environ.get('HTTP_X_INVOKE_PATH') or
+                environ.get('HTTP_X_VERCEL_PATH_INFO') or
+                environ.get('HTTP_X_FORWARDED_PREFIX') or
+                environ.get('REQUEST_URI')
+            )
+            if raw_uri:
+                clean_path = raw_uri.split('?')[0]
+                if clean_path and clean_path not in ('/api/index.py', '/api/index', '/api'):
+                    environ['PATH_INFO'] = clean_path
+                    if '?' in raw_uri and not environ.get('QUERY_STRING'):
+                        environ['QUERY_STRING'] = raw_uri.split('?', 1)[1]
+
         return self.wsgi_app(environ, start_response)
 
 app.wsgi_app = VercelWSGIMiddleware(app.wsgi_app)
@@ -142,13 +164,25 @@ def index():
                 return f.read(), 200, {'Content-Type': 'text/html; charset=utf-8'}
     return "Farm Shift V3 - index.html missing", 404
 
-@app.route('/api/index.py')
-@app.route('/api/index')
+@app.route('/api/index.py', methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
+@app.route('/api/index', methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
 def api_index_handler():
+    if request.method == 'OPTIONS':
+        return ('', 204)
     accept = request.headers.get('Accept', '')
-    if 'text/html' in accept or not accept:
+    if 'text/html' in accept:
         return index()
-    return jsonify({"status": "error", "message": "API entrypoint invoked without route specification"}), 400
+    return jsonify({
+        "status": "success",
+        "message": "Farm Shift V3 API Gateway Online",
+        "nasa_mission": "Field Shift: Adapting Farms with NASA Data",
+        "endpoints": {
+            "status": "/api/system/status",
+            "fieldshift_water_balance": "/api/fieldshift/water-balance",
+            "fieldshift_simulate_scenario": "/api/fieldshift/simulate-scenario",
+            "fieldshift_optimize": "/api/fieldshift/optimize"
+        }
+    }), 200
 
 @app.route('/<path:filename>')
 def serve_root_files(filename):
@@ -1370,6 +1404,7 @@ CROP_AGRONOMIC_PROFILES = {
 }
 
 @app.route('/api/fieldshift/water-balance', methods=['GET'])
+@app.route('/fieldshift/water-balance', methods=['GET'])
 def fieldshift_water_balance():
     """
     Computes FAO-56 Penman-Monteith Reference Evapotranspiration (ET0) and 
@@ -1494,6 +1529,7 @@ def fieldshift_water_balance():
     })
 
 @app.route('/api/fieldshift/smap-ecostress', methods=['GET'])
+@app.route('/fieldshift/smap-ecostress', methods=['GET'])
 def fieldshift_smap_ecostress():
     """
     Simulated & calibrated telemetry for NASA SMAP (surface 0-5cm and root-zone 0-100cm soil moisture)
@@ -1537,19 +1573,36 @@ def fieldshift_smap_ecostress():
         "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat()
     })
 
-@app.route('/api/fieldshift/simulate-scenario', methods=['POST'])
+@app.route('/api/fieldshift/simulate-scenario', methods=['GET', 'POST'])
+@app.route('/fieldshift/simulate-scenario', methods=['GET', 'POST'])
 def fieldshift_simulate_scenario():
     """
     Dynamic 'What-If' Climate Scenario Stress Simulator.
     Accepts delta_temp (+°C), delta_rain (%), and soil/crop conditions,
     then predicts yield impact and proposes an adaptive 'Field Shift' crop rotation.
     """
-    data = request.get_json() or {}
-    delta_temp = float(data.get('delta_temp', 2.0))      # +0 to +5.0 °C
-    delta_rain = float(data.get('delta_rain', -25.0))    # -50% to +50%
-    current_crop = data.get('current_crop', 'Paddy')
-    soil_type = data.get('soil_type', 'Clay Loam')
-    acres = float(data.get('acres', 2.5))
+    if request.method == 'GET':
+        data = request.args
+    else:
+        try:
+            data = request.get_json(force=True, silent=True) or {}
+        except Exception:
+            data = {}
+            
+    try:
+        delta_temp = float(data.get('delta_temp', 2.0) or 2.0)
+    except (TypeError, ValueError):
+        delta_temp = 2.0
+    try:
+        delta_rain = float(data.get('delta_rain', -25.0) or -25.0)
+    except (TypeError, ValueError):
+        delta_rain = -25.0
+    current_crop = str(data.get('current_crop', 'Paddy') or 'Paddy').strip()
+    soil_type = str(data.get('soil_type', 'Clay Loam') or 'Clay Loam').strip()
+    try:
+        acres = float(data.get('acres', 2.5) or 2.5)
+    except (TypeError, ValueError):
+        acres = 2.5
 
     crop_info = CROP_AGRONOMIC_PROFILES.get(current_crop, CROP_AGRONOMIC_PROFILES["Paddy"])
     
@@ -1616,7 +1669,8 @@ def fieldshift_simulate_scenario():
         }
     })
 
-@app.route('/api/fieldshift/optimize', methods=['POST'])
+@app.route('/api/fieldshift/optimize', methods=['GET', 'POST'])
+@app.route('/fieldshift/optimize', methods=['GET', 'POST'])
 def fieldshift_optimize_plan():
     """
     Multi-season Field Shift Adaptive Crop Rotation Engine.
@@ -1627,11 +1681,21 @@ def fieldshift_optimize_plan():
       - 'climate': Extreme Climate & Drought Defense
       - 'profit': High Yield & Economic Value
     """
-    data = request.get_json() or {}
-    priority = data.get('priority', 'water').lower()
-    current_crop = data.get('current_crop', 'Paddy')
-    soil_type = data.get('soil_type', 'Clay Loam')
-    acres = float(data.get('acres', 2.5))
+    if request.method == 'GET':
+        data = request.args
+    else:
+        try:
+            data = request.get_json(force=True, silent=True) or {}
+        except Exception:
+            data = {}
+            
+    priority = str(data.get('priority', 'water') or 'water').lower()
+    current_crop = str(data.get('current_crop', 'Paddy') or 'Paddy').strip()
+    soil_type = str(data.get('soil_type', 'Clay Loam') or 'Clay Loam').strip()
+    try:
+        acres = float(data.get('acres', 2.5) or 2.5)
+    except (TypeError, ValueError):
+        acres = 2.5
 
     # Formulate 3-Season Plan based on chosen priority
     if priority == 'water':

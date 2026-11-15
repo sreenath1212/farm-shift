@@ -89,6 +89,13 @@
   "users": [],
   "activity": [
     {
+      "id": "evt_1794755137561",
+      "type": "farm",
+      "title": "Farm saved",
+      "detail": "V3 Test Agricultural Plot was registered or updated.",
+      "created_at": "2026-11-15T15:05:37.561583+00:00"
+    },
+    {
       "id": "evt_1794752969723",
       "type": "farm",
       "title": "Farm saved",
