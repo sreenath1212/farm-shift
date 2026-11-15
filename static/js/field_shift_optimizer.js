@@ -323,3 +323,4 @@ const FieldShiftOptimizer = {
 };
 
 window.FieldShiftOptimizer = FieldShiftOptimizer;
+

@@ -12,8 +12,17 @@ import urllib.parse
 from flask import Flask, request, jsonify, send_from_directory, session
 from werkzeug.security import generate_password_hash, check_password_hash
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-app = Flask(__name__, static_folder='static')
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+if os.path.exists(os.path.join(CURRENT_DIR, 'index.html')) or os.path.exists(os.path.join(CURRENT_DIR, 'templates')):
+    BASE_DIR = CURRENT_DIR
+elif os.path.exists(os.path.join(os.path.dirname(CURRENT_DIR), 'index.html')):
+    BASE_DIR = os.path.dirname(CURRENT_DIR)
+else:
+    BASE_DIR = CURRENT_DIR
+
+static_path = os.path.join(BASE_DIR, 'static')
+template_path = os.path.join(BASE_DIR, 'templates')
+app = Flask(__name__, static_folder=static_path, template_folder=template_path)
 app.secret_key = os.environ.get('SECRET_KEY', 'farm-shift-v3-secret-key-2026')
 
 GUEST_MODE = True

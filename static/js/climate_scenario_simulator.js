@@ -227,3 +227,4 @@ const ClimateScenarioSimulator = {
 };
 
 window.ClimateScenarioSimulator = ClimateScenarioSimulator;
+
