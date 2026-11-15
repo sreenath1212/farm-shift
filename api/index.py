@@ -111,6 +111,23 @@ def current_user_id():
 
 # ─── Static file serving ──────────────────────────────────────────────────────
 
+# ─── Vercel WSGI Path Normalizer ─────────────────────────────────────────────
+class VercelWSGIMiddleware:
+    def __init__(self, wsgi_app):
+        self.wsgi_app = wsgi_app
+
+    def __call__(self, environ, start_response):
+        raw_uri = environ.get('HTTP_X_FORWARDED_URI') or environ.get('HTTP_X_MATCHED_PATH') or environ.get('REQUEST_URI')
+        if raw_uri:
+            clean_path = raw_uri.split('?')[0]
+            if clean_path and clean_path not in ('/api/index.py', '/api/index'):
+                environ['PATH_INFO'] = clean_path
+                if '?' in raw_uri and not environ.get('QUERY_STRING'):
+                    environ['QUERY_STRING'] = raw_uri.split('?', 1)[1]
+        return self.wsgi_app(environ, start_response)
+
+app.wsgi_app = VercelWSGIMiddleware(app.wsgi_app)
+
 @app.route('/')
 def index():
     for candidate in [
@@ -128,11 +145,16 @@ def index():
 @app.route('/api/index.py')
 @app.route('/api/index')
 def api_index_handler():
-    # If the root request was rewritten to /api/index or /api/index.py, serve the dashboard
-    return index()
+    accept = request.headers.get('Accept', '')
+    if 'text/html' in accept or not accept:
+        return index()
+    return jsonify({"status": "error", "message": "API entrypoint invoked without route specification"}), 400
 
 @app.route('/<path:filename>')
 def serve_root_files(filename):
+    if filename.startswith('api/'):
+        return jsonify({"status": "error", "message": f"API endpoint /{filename} not found"}), 404
+
     # NEVER serve Python source code or backend files to the browser
     if filename.endswith(('.py', '.pyc', '.json', '.env', '.md', '.txt', '.bat', '.sh', '.lock', '.log')):
         return index()
@@ -735,6 +757,7 @@ def nasa_appeears():
 # ─── NASA FIRMS FIRE & THERMAL ANOMALIES ──────────────────────────────────────
 
 @app.route('/api/firms/fires', methods=['GET'])
+@app.route('/firms/fires', methods=['GET'])
 def firms_fires():
     try:
         lat = float(request.args.get('lat', 10.5276))
@@ -755,7 +778,7 @@ def firms_fires():
     fires = []
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "FarmShift/3.0"})
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        with urllib.request.urlopen(req, timeout=3.5) as resp:
             raw_csv = resp.read().decode('utf-8', errors='replace')
         reader = csv.DictReader(io.StringIO(raw_csv))
         for row in reader:
@@ -914,6 +937,7 @@ def predictions_climate():
 # ─── CROP STRESS & VEGETATION ANOMALIES ────────────────────────────────────────
 
 @app.route('/api/analytics/crop-stress', methods=['GET'])
+@app.route('/analytics/crop-stress', methods=['GET'])
 def crop_stress():
     farm_id = request.args.get('farm_id', '').strip()
     store = load_store()
@@ -924,9 +948,25 @@ def crop_stress():
         return jsonify({
             "status": "success",
             "has_farm": False,
+            "farm_name": "General Farmland",
             "overall_stress_score": 18,
-            "stress_category": "Normal / Low Stress",
-            "stress_zones": []
+            "stress_category": "Low Stress",
+            "stress_components": {
+                "moisture_stress": 15,
+                "thermal_stress": 18,
+                "nitrogen_stress": 12
+            },
+            "zones": [
+                {
+                    "zone_id": "Sector A (North Bund)",
+                    "status": "Healthy",
+                    "stress_score": 14,
+                    "canopy_temp_c": 29.1,
+                    "soil_moisture_pct": 70,
+                    "action": "Maintain standard irrigation regime."
+                }
+            ],
+            "recommendation": "Overall crop stress is low across the agro-ecological basin."
         })
 
     # Synthetic but deterministic stress scoring based on farm crop and soil
@@ -984,6 +1024,7 @@ def crop_stress():
     })
 
 @app.route('/api/analytics/vegetation-anomalies', methods=['GET'])
+@app.route('/analytics/vegetation-anomalies', methods=['GET'])
 def vegetation_anomalies():
     farm_id = request.args.get('farm_id', '').strip()
     store = load_store()
@@ -1022,6 +1063,7 @@ def vegetation_anomalies():
 # ─── EXTREME WEATHER WARNINGS ─────────────────────────────────────────────────
 
 @app.route('/api/predictions/extreme-weather', methods=['GET'])
+@app.route('/predictions/extreme-weather', methods=['GET'])
 def extreme_weather():
     try:
         lat = float(request.args.get('lat', 10.5276))
@@ -1088,6 +1130,9 @@ def _risk_level(value, low, mid, high):
     return "critical"
 
 @app.route('/api/risk/assessment', methods=['GET'])
+@app.route('/risk/assessment', methods=['GET'])
+@app.route('/api/predictions/risk-assessment', methods=['GET'])
+@app.route('/predictions/risk-assessment', methods=['GET'])
 def risk_assessment():
     farm_id = request.args.get('farm_id', '').strip()
     store = load_store()
@@ -1190,6 +1235,9 @@ YIELD_TABLE = {
 }
 
 @app.route('/api/predictions/yield', methods=['GET'])
+@app.route('/predictions/yield', methods=['GET'])
+@app.route('/api/analytics/yield-estimation', methods=['GET'])
+@app.route('/analytics/yield-estimation', methods=['GET'])
 def yield_prediction():
     farm_id = request.args.get('farm_id', '').strip()
     store = load_store()
@@ -1197,7 +1245,14 @@ def yield_prediction():
     farm = next((f for f in farms if f.get("id") == farm_id), farms[0] if farms else None)
 
     if not farm:
-        return jsonify({"status": "error", "message": "Farm not found"}), 404
+        farm = {
+            "id": "default_plot",
+            "name": "General Agricultural Plot",
+            "current_crop": "Short-Duration Rice",
+            "acreage": 2.5,
+            "soil_type": "Alluvial Clay Loam",
+            "irrigation_mode": "Canal / Bund Controlled"
+        }
 
     crop_name = str(farm.get("current_crop") or farm.get("crop") or "Short-Duration Rice").strip()
     crop_key = crop_name.lower()
