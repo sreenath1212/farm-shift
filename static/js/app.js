@@ -1,14 +1,12 @@
 /**
- * Farm Shift V2+ - Application Controller & Router (Vanilla JS)
- * Coordinates 8 Dashboard Sections:
- * 1. Overview (Clean Empty State or Real Registered Farm)
- * 2. My Farms
- * 3. Farm Location
- * 4. Farm Analytics
- * 5. Crop Rotation
- * 6. Farming Recommendations
- * 7. Alerts
- * 8. Settings
+ * Farm Shift V3 - Application Controller & Master Router (Vanilla JS)
+ * Coordinates 6 Platform Categories across 21 Functional Views:
+ * 1. Dashboard: Overview
+ * 2. Farm Management: My Farms, Farm Location, Farm Map, Crop Advisor, Crop Rotation
+ * 3. Agricultural Intelligence: Improvements, AI Suggestions, Market Trends
+ * 4. Analytics: Farm Analytics, Climate Intelligence, Crop Stress, Vegetation Anomalies, Yield Estimation
+ * 5. Risk Intelligence: Prediction Dashboard, Risk Assessment, Extreme Weather, Environmental Monitoring
+ * 6. General: Alerts, Settings, Profile
  */
 
 const FarmApp = {
@@ -17,8 +15,9 @@ const FarmApp = {
   liveWeather: null,
 
   init: async function() {
-    console.log("Farm Shift V2+ Initializing...");
+    console.log("Farm Shift V3 Initializing...");
     await FarmManager.init();
+    if (typeof FarmAuth !== 'undefined') await FarmAuth.init();
     FarmRegistration.init();
     this.setupViewRouter();
     this.setupEventListeners();
@@ -61,38 +60,41 @@ const FarmApp = {
   },
 
   setupViewRouter: function() {
-    const navLinks = document.querySelectorAll('.nav-link, .bottom-nav-item');
+    const navLinks = document.querySelectorAll('.nav-link, .bottom-nav-item, [data-tab]');
     navLinks.forEach(link => {
       link.addEventListener('click', (e) => {
-        e.preventDefault();
         const tab = link.getAttribute('data-tab');
-        if (tab) this.showView(tab);
+        if (tab) {
+          e.preventDefault();
+          this.showView(tab);
+        }
       });
     });
   },
 
   showView: function(viewName) {
-    // Map legacy names if needed
+    // Normalization & alias mappings
     if (viewName === 'dashboard') viewName = 'overview';
-    if (viewName === 'map') viewName = 'location';
-    if (viewName === 'advisor') viewName = 'rotation';
+    if (viewName === 'map') viewName = 'farm-map';
+    if (viewName === 'advisor') viewName = 'crop-advisor';
+    if (viewName === 'methods') viewName = 'improvements';
 
     this.currentView = viewName;
 
-    // Update desktop sidebar
+    // Update desktop sidebar links
     document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
       const t = link.getAttribute('data-tab');
-      if (t === viewName || (viewName === 'overview' && t === 'dashboard') || (viewName === 'location' && t === 'map') || (viewName === 'rotation' && t === 'advisor')) {
+      if (t === viewName) {
         link.classList.add('active');
       } else {
         link.classList.remove('active');
       }
     });
 
-    // Update mobile bottom nav
+    // Update mobile bottom nav items
     document.querySelectorAll('.mobile-bottom-nav .bottom-nav-item').forEach(item => {
       const t = item.getAttribute('data-tab');
-      if (t === viewName || (viewName === 'overview' && t === 'dashboard') || (viewName === 'location' && t === 'map') || (viewName === 'rotation' && t === 'advisor')) {
+      if (t === viewName) {
         item.classList.add('active');
       } else {
         item.classList.remove('active');
@@ -113,23 +115,48 @@ const FarmApp = {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     // Initialize sub-view modules
-    const activeFarm = FarmManager.getActiveFarm();
     if (viewName === 'overview') {
       this.renderOverview();
     } else if (viewName === 'my-farms') {
       FarmMyFarms.init();
     } else if (viewName === 'location') {
       FarmMapV2.init(this.getActiveFarmLegacyState());
-    } else if (viewName === 'analytics') {
-      FarmAnalytics.init(this.getActiveFarmLegacyState());
+    } else if (viewName === 'farm-map') {
+      if (typeof FarmMapGIS !== 'undefined') FarmMapGIS.init();
+    } else if (viewName === 'crop-advisor') {
+      if (typeof FarmCropAdvisorV3 !== 'undefined') FarmCropAdvisorV3.init();
     } else if (viewName === 'rotation') {
       FarmCropRotation.init();
-    } else if (viewName === 'methods') {
+    } else if (viewName === 'improvements') {
       FarmSmartMethods.init();
+    } else if (viewName === 'ai-suggestions') {
+      if (typeof FarmAISuggestions !== 'undefined') FarmAISuggestions.init();
+    } else if (viewName === 'market') {
+      if (typeof FarmMarket !== 'undefined') FarmMarket.init();
+    } else if (viewName === 'analytics') {
+      FarmAnalytics.init(this.getActiveFarmLegacyState());
+    } else if (viewName === 'climate') {
+      if (typeof FarmClimateV3 !== 'undefined') FarmClimateV3.init();
+    } else if (viewName === 'crop-stress') {
+      if (typeof FarmCropStressV3 !== 'undefined') FarmCropStressV3.init();
+    } else if (viewName === 'vegetation-anomalies') {
+      if (typeof FarmVegetationAnomaliesV3 !== 'undefined') FarmVegetationAnomaliesV3.init();
+    } else if (viewName === 'yield-estimation') {
+      if (typeof FarmYieldEstimationV3 !== 'undefined') FarmYieldEstimationV3.init();
+    } else if (viewName === 'prediction') {
+      if (typeof FarmPredictionHubV3 !== 'undefined') FarmPredictionHubV3.init();
+    } else if (viewName === 'risk') {
+      if (typeof FarmRiskAssessmentV3 !== 'undefined') FarmRiskAssessmentV3.init();
+    } else if (viewName === 'extreme-weather') {
+      if (typeof FarmExtremeWeatherV3 !== 'undefined') FarmExtremeWeatherV3.init();
+    } else if (viewName === 'environmental-monitoring') {
+      if (typeof FarmEnvironmentalMonitoringV3 !== 'undefined') FarmEnvironmentalMonitoringV3.init();
     } else if (viewName === 'alerts') {
       FarmAlerts.init();
     } else if (viewName === 'settings') {
       FarmSettings.init(this.getActiveFarmLegacyState());
+    } else if (viewName === 'profile') {
+      if (typeof FarmProfileV3 !== 'undefined') FarmProfileV3.init();
     }
   },
 
@@ -166,7 +193,6 @@ const FarmApp = {
     const mobRegistered = document.getElementById('mobile-overview-registered');
 
     if (!FarmManager.hasFarms()) {
-      // PROMINENT EMPTY DASHBOARD
       if (emptyBox) emptyBox.style.display = 'block';
       if (registeredContent) registeredContent.style.display = 'none';
       if (mobEmpty) mobEmpty.style.display = 'block';
@@ -174,7 +200,6 @@ const FarmApp = {
       return;
     }
 
-    // REGISTERED FARM DASHBOARD
     if (emptyBox) emptyBox.style.display = 'none';
     if (registeredContent) registeredContent.style.display = 'block';
     if (mobEmpty) mobEmpty.style.display = 'none';
@@ -193,7 +218,7 @@ const FarmApp = {
     const elTempVal = document.getElementById('kpi-temp-val');
     const elRainVal = document.getElementById('kpi-rain-val');
 
-    if (elCropVal) elCropVal.textContent = farm.current_crop || "Rice";
+    if (elCropVal) elCropVal.textContent = farm.current_crop || "Short-Duration Rice";
     if (elSoilVal) elSoilVal.textContent = "68%";
     if (elTempVal) elTempVal.textContent = `${temp}°C`;
     if (elRainVal) elRainVal.textContent = `${farm.acreage} ha`;
@@ -279,7 +304,7 @@ const FarmApp = {
   },
 
   setupEventListeners: function() {
-    // Add Farm buttons (trigger 5-step wizard)
+    // Add Farm buttons
     document.querySelectorAll('.btn-trigger-add-farm').forEach(btn => {
       btn.addEventListener('click', () => {
         FarmRegistration.openWizard(1);
@@ -296,8 +321,8 @@ const FarmApp = {
     // Overview buttons
     const deskPlanBtn = document.getElementById('desk-view-plan-btn');
     const mobPlanBtn = document.getElementById('mob-view-plan-btn');
-    if (deskPlanBtn) deskPlanBtn.addEventListener('click', () => this.showView('methods'));
-    if (mobPlanBtn) mobPlanBtn.addEventListener('click', () => this.showView('methods'));
+    if (deskPlanBtn) deskPlanBtn.addEventListener('click', () => this.showView('improvements'));
+    if (mobPlanBtn) mobPlanBtn.addEventListener('click', () => this.showView('improvements'));
 
     // Location selector pill
     const deskLocBtn = document.getElementById('desk-location-btn');
@@ -334,7 +359,6 @@ const FarmApp = {
   },
 
   setupModals: function() {
-    // Global modal close handlers
     document.querySelectorAll('.modal-close-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));

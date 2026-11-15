@@ -1,11 +1,12 @@
 /**
- * Farm Shift V2+ - Farm Location Detection & Registration Wizard (Vanilla JS)
- * Implements the 5-step guided registration flow:
- * Step 1: Explicit permission request
- * Step 2: Device geolocation detection with accuracy readout
- * Step 3: Interactive map location verification
- * Step 4: Farmland boundary marking & characteristics capture
- * Step 5: Farm persistence & dashboard activation
+ * Farm Shift V3 - Farm Location Detection & Registration Wizard (Vanilla JS)
+ * Fixes location detection using:
+ * - Device Geolocation with high accuracy
+ * - Backend Geocoding Proxy (/api/geo/reverse and /api/geo/search) to prevent CORS/rate limits
+ * - Explicit separation of device position vs actual farmland position
+ * - Place search input (villages, panchayats, PIN codes)
+ * - Draggable map pin on high-res satellite tiles
+ * - Farmer confirmation authority ("Is this your farm's location?")
  */
 
 const FarmRegistration = {
@@ -14,8 +15,6 @@ const FarmRegistration = {
   confirmedLocation: null,
   verificationMap: null,
   verificationMarker: null,
-  boundaryPolygon: null,
-  boundaryPoints: [],
 
   init: function() {
     this.bindEvents();
@@ -54,28 +53,24 @@ const FarmRegistration = {
     });
 
     if (stepNum === 3) {
-      setTimeout(() => this.setupVerificationMap(), 200);
+      setTimeout(() => this.setupVerificationMap(), 250);
     }
   },
 
   bindEvents: function() {
-    // Step 1: Permission buttons
+    // Step 1 buttons
     const btnAllowGeo = document.getElementById('btn-wizard-allow-geo');
     const btnManualEntry = document.getElementById('btn-wizard-manual-entry');
 
     if (btnAllowGeo) {
-      btnAllowGeo.addEventListener('click', () => {
-        this.detectLocation();
-      });
+      btnAllowGeo.addEventListener('click', () => this.detectLocation());
     }
 
     if (btnManualEntry) {
-      btnManualEntry.addEventListener('click', () => {
-        this.openManualEntry();
-      });
+      btnManualEntry.addEventListener('click', () => this.openManualMapMode());
     }
 
-    // Step 3: Verification buttons
+    // Step 3 buttons
     const btnConfirmLoc = document.getElementById('btn-wizard-confirm-loc');
     const btnAdjustLoc = document.getElementById('btn-wizard-adjust-loc');
     const btnDetectAgain = document.getElementById('btn-wizard-detect-again');
@@ -91,23 +86,18 @@ const FarmRegistration = {
 
     if (btnAdjustLoc) {
       btnAdjustLoc.addEventListener('click', () => {
-        FarmApp.showToast("Click anywhere on the map or drag the pin to your exact farmland.", "info");
-        if (this.verificationMarker) {
-          this.verificationMarker.dragging.enable();
+        if (typeof FarmApp !== 'undefined' && FarmApp.showToast) {
+          FarmApp.showToast("Click anywhere on the map or drag the pin to your exact farmland plot.", "info");
         }
       });
     }
 
     if (btnDetectAgain) {
-      btnDetectAgain.addEventListener('click', () => {
-        this.detectLocation();
-      });
+      btnDetectAgain.addEventListener('click', () => this.detectLocation());
     }
 
     if (btnEnterManuallyFrom3) {
-      btnEnterManuallyFrom3.addEventListener('click', () => {
-        this.openManualEntry();
-      });
+      btnEnterManuallyFrom3.addEventListener('click', () => this.openManualMapMode());
     }
 
     // Step 4: Form submit
@@ -123,15 +113,21 @@ const FarmRegistration = {
     if (btnBackTo3) {
       btnBackTo3.addEventListener('click', () => this.showStep(3));
     }
+
+    // Wizard close buttons
+    document.querySelectorAll('.wizard-close-btn').forEach(btn => {
+      btn.addEventListener('click', () => this.closeWizard());
+    });
   },
 
   detectLocation: function() {
-    const statusBox = document.getElementById('wizard-detect-status');
     this.showStep(2); // show detecting spinner
 
     if (!navigator.geolocation) {
-      FarmApp.showToast("Geolocation is not supported by your browser. Please enter location manually.", "error");
-      this.openManualEntry();
+      if (typeof FarmApp !== 'undefined' && FarmApp.showToast) {
+        FarmApp.showToast("Geolocation is not supported by your browser. Enabling map search.", "warning");
+      }
+      this.openManualMapMode();
       return;
     }
 
@@ -143,55 +139,45 @@ const FarmRegistration = {
 
         let locName = `${lat.toFixed(4)}°N, ${lng.toFixed(4)}°E`;
         try {
-          // Attempt reverse geocoding via Open-Meteo or Nominatim
-          const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`, {
-            headers: { 'Accept-Language': 'en' }
-          });
-          if (geoRes.ok) {
-            const geoData = await geoRes.json();
-            const addr = geoData.address || {};
-            const town = addr.city || addr.town || addr.village || addr.county || "Farmland";
-            const state = addr.state || "";
-            const country = addr.country || "India";
-            locName = `${town}${state ? ', ' + state : ''}, ${country}`;
+          // Use reliable backend reverse geocoding proxy
+          const res = await fetch(`/api/geo/reverse?lat=${lat}&lng=${lng}`).then(r => r.json());
+          if (res && res.display_name) {
+            locName = res.display_name;
           }
         } catch (e) {
-          // Default regional fallback based on coordinates
-          if (lat >= 8 && lat <= 13 && lng >= 74 && lng <= 78) {
-            locName = "Thrissur Region, Kerala, India";
-          }
+          locName = `Farmland (${lat}°N, ${lng}°E), India`;
         }
 
         this.detectedLocation = {
           lat: lat,
           lng: lng,
           accuracy: acc,
-          name: locName
+          name: locName,
+          isDeviceGps: true
         };
 
         this.showStep(3);
       },
       (err) => {
         console.warn("Geolocation denied or timed out:", err);
-        FarmApp.showToast("Location access denied or unavailable. You can enter your farm location manually.", "warning");
-        this.openManualEntry();
+        if (typeof FarmApp !== 'undefined' && FarmApp.showToast) {
+          FarmApp.showToast("Device location access not granted. Use map search to pinpoint your farm.", "info");
+        }
+        this.openManualMapMode();
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
   },
 
-  openManualEntry: function() {
-    // Fallback to Kerala agricultural baseline coordinates or default
+  openManualMapMode: function() {
     this.detectedLocation = {
       lat: 10.5276,
       lng: 76.2144,
       accuracy: 50,
-      name: "Thrissur, Kerala, India (Manual Location)"
+      name: "Thrissur Agricultural Plain, Kerala, India",
+      isDeviceGps: false
     };
-    this.confirmedLocation = Object.assign({}, this.detectedLocation);
-    this.populateStep4Form();
-    this.showStep(4);
-    FarmApp.showToast("Manual entry mode enabled. Enter your farm details.", "info");
+    this.showStep(3);
   },
 
   setupVerificationMap: function() {
@@ -203,7 +189,7 @@ const FarmRegistration = {
       this.verificationMap = null;
     }
 
-    const loc = this.detectedLocation || { lat: 10.5276, lng: 76.2144, accuracy: 15, name: "Thrissur, Kerala, India" };
+    const loc = this.detectedLocation || { lat: 10.5276, lng: 76.2144, accuracy: 15, name: "Kerala, India" };
 
     // Update readout labels
     const lblLocName = document.getElementById('wizard-verify-loc-name');
@@ -212,14 +198,10 @@ const FarmRegistration = {
 
     if (lblLocName) lblLocName.textContent = loc.name;
     if (lblCoords) lblCoords.textContent = `${loc.lat.toFixed(5)}° N, ${loc.lng.toFixed(5)}° E`;
-    if (lblAcc) lblAcc.textContent = `±${loc.accuracy} meters (Device GPS)`;
+    if (lblAcc) lblAcc.textContent = loc.isDeviceGps ? `±${loc.accuracy}m (Device GPS)` : `Manual Pinpoint`;
 
     if (typeof L === 'undefined') {
-      mapDiv.innerHTML = `
-        <div style="padding: 20px; background: rgba(0,0,0,0.5); color: #fff; text-align: center; border-radius: 12px;">
-          📍 GPS Detected: ${loc.lat}° N, ${loc.lng}° E (${loc.name})
-        </div>
-      `;
+      mapDiv.innerHTML = `<div style="padding: 20px; color: #fff; text-align: center;">📍 GPS Coordinates: ${loc.lat}° N, ${loc.lng}° E (${loc.name})</div>`;
       return;
     }
 
@@ -234,11 +216,10 @@ const FarmRegistration = {
         attribution: 'Esri World Imagery'
       }).addTo(this.verificationMap);
 
-      // Marker indicating device detected position
       const customPin = L.divIcon({
         className: 'device-gps-pin',
         html: `
-          <div style="width: 24px; height: 24px; border-radius: 50%; background: #38bdf8; border: 3px solid #fff; box-shadow: 0 0 15px #38bdf8; animation: pulsePin 1.5s infinite;"></div>
+          <div style="width: 24px; height: 24px; border-radius: 50%; background: #22c55e; border: 3px solid #fff; box-shadow: 0 0 15px #22c55e;"></div>
         `,
         iconSize: [24, 24],
         iconAnchor: [12, 12]
@@ -246,28 +227,96 @@ const FarmRegistration = {
 
       this.verificationMarker = L.marker([loc.lat, loc.lng], { icon: customPin, draggable: true }).addTo(this.verificationMap);
 
-      // Map click or drag listener for adjustment
-      this.verificationMarker.on('dragend', (e) => {
+      // Drag listener
+      this.verificationMarker.on('dragend', async (e) => {
         const newPos = e.target.getLatLng();
-        this.updateDetectedCoordinates(newPos.lat, newPos.lng);
+        await this.handleCoordinateUpdate(newPos.lat, newPos.lng);
       });
 
-      this.verificationMap.on('click', (e) => {
+      // Click anywhere to move marker
+      this.verificationMap.on('click', async (e) => {
         this.verificationMarker.setLatLng(e.latlng);
-        this.updateDetectedCoordinates(e.latlng.lat, e.latlng.lng);
+        await this.handleCoordinateUpdate(e.latlng.lat, e.latlng.lng);
       });
+
+      // Insert search bar dynamically if not already present
+      if (!document.getElementById('wizard-place-search-bar')) {
+        const searchBar = document.createElement('div');
+        searchBar.id = 'wizard-place-search-bar';
+        searchBar.style.cssText = 'margin-bottom: 12px; display: flex; gap: 8px;';
+        searchBar.innerHTML = `
+          <input type="text" id="wizard-place-search-input" placeholder="Search village, panchayat, town, or PIN code..." class="form-control" style="flex: 1;" />
+          <button type="button" class="btn-pill btn-primary-green" id="btn-wizard-place-search" style="padding: 8px 16px;">Search</button>
+        `;
+        mapDiv.parentNode.insertBefore(searchBar, mapDiv);
+
+        document.getElementById('btn-wizard-place-search')?.addEventListener('click', () => this.searchPlace());
+        document.getElementById('wizard-place-search-input')?.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            this.searchPlace();
+          }
+        });
+      }
+
+      setTimeout(() => {
+        if (this.verificationMap) this.verificationMap.invalidateSize();
+      }, 300);
 
     } catch (e) {
-      console.warn("Verification map error:", e);
+      console.warn("Verification map setup error:", e);
     }
   },
 
-  updateDetectedCoordinates: function(lat, lng) {
+  searchPlace: async function() {
+    const input = document.getElementById('wizard-place-search-input');
+    const q = input ? input.value.trim() : '';
+    if (!q) return;
+
+    try {
+      const res = await fetch(`/api/geo/search?q=${encodeURIComponent(q)}`).then(r => r.json());
+      if (res.results && res.results.length > 0) {
+        const first = res.results[0];
+        if (this.verificationMap && this.verificationMarker) {
+          this.verificationMap.setView([first.lat, first.lng], 16);
+          this.verificationMarker.setLatLng([first.lat, first.lng]);
+        }
+        await this.handleCoordinateUpdate(first.lat, first.lng, first.display_name);
+        if (typeof FarmApp !== 'undefined' && FarmApp.showToast) {
+          FarmApp.showToast(`Found: ${first.display_name}`, "success");
+        }
+      } else {
+        if (typeof FarmApp !== 'undefined' && FarmApp.showToast) {
+          FarmApp.showToast("No locations found for this query. Try a nearby town or district.", "warning");
+        }
+      }
+    } catch (e) {
+      console.warn("Search place error:", e);
+    }
+  },
+
+  handleCoordinateUpdate: async function(lat, lng, explicitName = null) {
     this.detectedLocation.lat = parseFloat(lat.toFixed(5));
     this.detectedLocation.lng = parseFloat(lng.toFixed(5));
+    this.detectedLocation.isDeviceGps = false;
+
+    let resolvedName = explicitName;
+    if (!resolvedName) {
+      try {
+        const res = await fetch(`/api/geo/reverse?lat=${this.detectedLocation.lat}&lng=${this.detectedLocation.lng}`).then(r => r.json());
+        if (res && res.display_name) resolvedName = res.display_name;
+      } catch (e) {}
+    }
+
+    if (resolvedName) this.detectedLocation.name = resolvedName;
+
+    const lblLocName = document.getElementById('wizard-verify-loc-name');
     const lblCoords = document.getElementById('wizard-verify-coords');
-    if (lblCoords) lblCoords.textContent = `${this.detectedLocation.lat}° N, ${this.detectedLocation.lng}° E (Adjusted)`;
-    FarmApp.showToast("Farm marker adjusted to new GPS coordinates.", "success");
+    const lblAcc = document.getElementById('wizard-verify-accuracy');
+
+    if (lblLocName) lblLocName.textContent = this.detectedLocation.name;
+    if (lblCoords) lblCoords.textContent = `${this.detectedLocation.lat}° N, ${this.detectedLocation.lng}° E`;
+    if (lblAcc) lblAcc.textContent = `Pinpoint Confirmed by Farmer`;
   },
 
   populateStep4Form: function() {
@@ -276,7 +325,7 @@ const FarmRegistration = {
     const inputLat = document.getElementById('wiz-farm-lat');
     const inputLng = document.getElementById('wiz-farm-lng');
 
-    if (inputLoc) inputLoc.value = loc.name || "Thrissur, Kerala, India";
+    if (inputLoc) inputLoc.value = loc.name || "Kerala, India";
     if (inputLat) inputLat.value = loc.lat;
     if (inputLng) inputLng.value = loc.lng;
   },
@@ -292,12 +341,9 @@ const FarmRegistration = {
     const soilType = document.getElementById('wiz-soil-type')?.value || "Alluvial Clay Loam";
     const soilPh = parseFloat(document.getElementById('wiz-soil-ph')?.value) || 6.5;
     const irrigation = document.getElementById('wiz-irrigation')?.value || "Canal / Bund Controlled";
-    const waterAvail = document.getElementById('wiz-water-avail')?.value || "Moderate";
-    const terrain = document.getElementById('wiz-terrain')?.value || "Flat Plain";
     const prevCrop = document.getElementById('wiz-prev-crop')?.value || "Long-Duration Paddy";
     const currentCrop = document.getElementById('wiz-current-crop')?.value || "Short-Duration Rice";
 
-    // Compute synthetic field boundary polygon scaled to acreage around confirmed lat/lng
     const offset = 0.0010 * Math.sqrt(acreage / 2.5);
     const polygonCoords = [
       [lat + offset * 0.9, lng - offset * 1.1],
@@ -317,21 +363,20 @@ const FarmRegistration = {
       soil_type: soilType,
       soil_ph: soilPh,
       irrigation_mode: irrigation,
-      water_availability: waterAvail,
-      terrain_slope: terrain,
       previous_crops: prevCrop,
       current_crop: currentCrop,
       polygon_coordinates: polygonCoords,
-      health_score: 88,
+      health_score: 90,
       created_at: new Date().toISOString()
     };
 
-    // Save to FarmManager (localStorage & API)
     await FarmManager.addFarm(farmPayload);
 
     this.closeWizard();
-    FarmApp.showToast(`Congratulations! "${name}" successfully registered and activated.`, "success");
-    FarmApp.showView('overview');
+    if (typeof FarmApp !== 'undefined') {
+      FarmApp.showToast(`"${name}" successfully registered and activated on dashboard!`, "success");
+      FarmApp.renderAll();
+      FarmApp.showView('overview');
+    }
   }
 };
-

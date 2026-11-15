@@ -151,6 +151,10 @@ const FarmManager = {
     };
 
     modal.classList.add('open');
+  },
+
+  getAllFarms: function() {
+    return this.farms || [];
   }
 };
 
