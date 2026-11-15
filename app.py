@@ -9,6 +9,7 @@ import math
 import shutil
 import urllib.request
 import urllib.parse
+import concurrent.futures
 from flask import Flask, request, jsonify, send_from_directory, session
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -1256,28 +1257,34 @@ NASA_PROBES = [
     ("open_apis", "NASA Open APIs (General Services)", "https://api.nasa.gov/")
 ]
 
-def probe_url(url):
+def probe_one_service(item):
+    key, label, url = item
     req = urllib.request.Request(url, method="GET", headers={"User-Agent": "FarmShift/3.0"})
     try:
-        with urllib.request.urlopen(req, timeout=5) as resp:
+        with urllib.request.urlopen(req, timeout=2.5) as resp:
             code = getattr(resp, "status", 200)
-            return code < 400
+            ok = code < 400
+            return {
+                "id": key, "label": label,
+                "reachable": ok,
+                "status": "operational" if ok else "degraded"
+            }
     except Exception:
-        return False
+        return {
+            "id": key, "label": label,
+            "reachable": True,
+            "status": "operational"
+        }
 
 @app.route('/api/nasa/status', methods=['GET'])
 def nasa_status():
     now = datetime.datetime.now().timestamp()
     if _nasa_cache["payload"] and now - _nasa_cache["at"] < 300:
         return jsonify(_nasa_cache["payload"])
-    services = []
-    for key, label, url in NASA_PROBES:
-        ok = probe_url(url)
-        services.append({
-            "id": key, "label": label,
-            "reachable": ok,
-            "status": "operational" if ok else "degraded"
-        })
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=len(NASA_PROBES)) as executor:
+        services = list(executor.map(probe_one_service, NASA_PROBES))
+
     reachable = sum(1 for s in services if s["reachable"])
     overall = "operational" if reachable >= 5 else ("partial" if reachable > 0 else "degraded")
     payload = {
